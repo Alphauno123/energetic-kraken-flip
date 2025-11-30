@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UploadCloud, X } from 'lucide-react';
+import { AspectRatio } from "@/components/ui/aspect-ratio"; // Import AspectRatio
 
 interface ImageUploadProps {
   onImageUpload: (image: string | null) => void;
@@ -77,8 +78,10 @@ const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
                 </p>
               </div>
             ) : (
-              <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-700">
-                <img src={image} alt="Uploaded Product" className="w-full h-full object-contain bg-gray-100 dark:bg-gray-800" />
+              <div className="relative w-full rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                <AspectRatio ratio={16 / 9} className="bg-gray-100 dark:bg-gray-800">
+                  <img src={image} alt="Uploaded Product" className="w-full h-full object-contain" />
+                </AspectRatio>
                 <Button
                   variant="destructive"
                   size="icon"
