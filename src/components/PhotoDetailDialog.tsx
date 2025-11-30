@@ -18,14 +18,15 @@ interface PhotoDetailDialogProps {
   styleId: string;
   index: number;
   children: React.ReactNode; // To wrap the trigger element
+  uploadedImage?: string | null; // New prop for the uploaded image
 }
 
-const PhotoDetailDialog = ({ styleId, index, children }: PhotoDetailDialogProps) => {
+const PhotoDetailDialog = ({ styleId, index, children, uploadedImage }: PhotoDetailDialogProps) => {
   const getGenericPlaceholderUrl = () => "/placeholder.svg"; // Placeholder for actual image URL
 
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = getGenericPlaceholderUrl();
+    link.href = uploadedImage || getGenericPlaceholderUrl(); // Use uploadedImage if available
     link.download = `product-photo-${styleId}-${index + 1}.png`;
     document.body.appendChild(link);
     link.click();
@@ -35,7 +36,8 @@ const PhotoDetailDialog = ({ styleId, index, children }: PhotoDetailDialogProps)
 
   const handleShare = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.origin + getGenericPlaceholderUrl());
+      const imageUrl = uploadedImage || window.location.origin + getGenericPlaceholderUrl();
+      await navigator.clipboard.writeText(imageUrl);
       toast.success("Image link copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy image link: ", err);
@@ -45,7 +47,8 @@ const PhotoDetailDialog = ({ styleId, index, children }: PhotoDetailDialogProps)
 
   const handleCopyImage = async () => {
     try {
-      const response = await fetch(getGenericPlaceholderUrl());
+      const imageUrl = uploadedImage || getGenericPlaceholderUrl();
+      const response = await fetch(imageUrl);
       const blob = await response.blob();
       await navigator.clipboard.write([
         new ClipboardItem({
@@ -72,7 +75,7 @@ const PhotoDetailDialog = ({ styleId, index, children }: PhotoDetailDialogProps)
           </DialogDescription>
         </DialogHeader>
         <div className="p-6 pt-4">
-          <GeneratedPhotoPlaceholder styleId={styleId} index={index} className="w-full h-auto aspect-video rounded-lg mb-4" />
+          <GeneratedPhotoPlaceholder styleId={styleId} index={index} uploadedImage={uploadedImage} className="w-full h-auto aspect-video rounded-lg mb-4" />
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <Button onClick={handleDownload} className="flex-1">
               <Download className="mr-2 h-4 w-4" /> Download

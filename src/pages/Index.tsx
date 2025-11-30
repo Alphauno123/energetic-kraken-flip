@@ -106,7 +106,7 @@ const Index = () => {
 
         {!isGenerating && generatedPhotos.length > 0 && (
           <div ref={generatedPhotosRef}>
-            <GeneratedPhotosDisplay photos={generatedPhotos} />
+            <GeneratedPhotosDisplay photos={generatedPhotos} uploadedImage={uploadedImage} />
           </div>
         )}
       </main>

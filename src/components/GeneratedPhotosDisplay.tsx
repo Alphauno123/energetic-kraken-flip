@@ -11,9 +11,10 @@ import PhotoDetailDialog from './PhotoDetailDialog'; // Import the new dialog co
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string }>; // Updated prop type
+  uploadedImage: string | null; // New prop for the uploaded image
 }
 
-const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
+const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDisplayProps) => {
   if (photos.length === 0) {
     return null;
   }
@@ -31,7 +32,7 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
 
     photos.forEach((photoData, index) => {
       const link = document.createElement('a');
-      link.href = getGenericPlaceholderUrl(); // Use generic placeholder for actual download
+      link.href = uploadedImage || getGenericPlaceholderUrl(); // Use uploadedImage if available, otherwise generic placeholder
       link.download = `product-photo-${photoData.styleId}-${index + 1}.png`; // Suggest a filename
       document.body.appendChild(link); // Append to body to make it clickable
       link.click(); // Programmatically click the link
@@ -40,8 +41,6 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
 
     toast.success("All photos are downloading!", { id: "download-toast" });
   };
-
-  // Removed individual Share and Copy handlers from here as they are now in PhotoDetailDialog
 
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
@@ -57,9 +56,9 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {photos.map((photoData, index) => (
-            <PhotoDetailDialog key={photoData.uniqueId} styleId={photoData.styleId} index={index}>
+            <PhotoDetailDialog key={photoData.uniqueId} styleId={photoData.styleId} index={index} uploadedImage={uploadedImage}>
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
-                <GeneratedPhotoPlaceholder styleId={photoData.styleId} index={index} />
+                <GeneratedPhotoPlaceholder styleId={photoData.styleId} index={index} uploadedImage={uploadedImage} />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
                     <Expand className="mr-2 h-4 w-4" /> View Details
