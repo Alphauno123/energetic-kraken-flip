@@ -7,21 +7,20 @@ import StylePlaceholderImage from './StylePlaceholderImage';
 import ImageCountSelector from './ImageCountSelector';
 import { getStylePreviewImageUrl } from '@/utils/imageUtils';
 
-interface CustomStyleCardProps {
-  styleId: string; // The unique ID for the custom style (e.g., 'custom-12345')
-  styleName: string; // The user's prompt for the custom style
-  description: string; // A generic description for custom styles
+interface StyleCardProps {
+  styleId: string;
+  styleName: string;
+  description: string;
   isSelected: boolean;
   onClick: () => void;
   count: number;
   onCountChange: (newCount: number) => void;
+  prompt?: string; // Optional prompt for custom styles
 }
 
-const CustomStyleCard = ({ styleId, styleName, description, isSelected, onClick, count, onCountChange }: CustomStyleCardProps) => {
-  // For custom styles, we use a generic 'custom' ID for placeholder image logic
-  // to ensure it picks up the correct icon and background from utils/styles.ts
-  const effectiveStyleId = 'custom';
-  const previewImageUrl = getStylePreviewImageUrl(effectiveStyleId);
+const StyleCard = ({ styleId, styleName, description, isSelected, onClick, count, onCountChange, prompt }: StyleCardProps) => {
+  // Use the original styleId for the preview image URL, as getStylePreviewImageUrl handles it
+  const previewImageUrl = getStylePreviewImageUrl(styleId);
 
   return (
     <div
@@ -33,7 +32,7 @@ const CustomStyleCard = ({ styleId, styleName, description, isSelected, onClick,
       )}
       onClick={onClick}
     >
-      <StylePlaceholderImage styleId={effectiveStyleId} styleName={styleName} imageUrl={previewImageUrl} />
+      <StylePlaceholderImage styleId={styleId} styleName={styleName} imageUrl={previewImageUrl} prompt={prompt} />
       <div className="p-4 flex-grow">
         <h3 className="font-semibold text-lg mb-1 line-clamp-2">{styleName}</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
@@ -60,4 +59,4 @@ const CustomStyleCard = ({ styleId, styleName, description, isSelected, onClick,
   );
 };
 
-export default CustomStyleCard;
+export default StyleCard;

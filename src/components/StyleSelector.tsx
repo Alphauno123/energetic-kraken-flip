@@ -3,10 +3,9 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import StylePreviewCard from './StylePreviewCard';
+import StyleCard from './StyleCard'; // Import the new generic StyleCard
 import CustomStyleInput from './CustomStyleInput';
-import CustomStyleCard from './CustomStyleCard'; // Import the new CustomStyleCard
-import { predefinedStyles, SelectedStyleWithCount, StyleOption } from '@/utils/styles'; // Import predefinedStyles and getStyleNameById
+import { predefinedStyles, SelectedStyleWithCount, StyleOption } from '@/utils/styles';
 
 const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: SelectedStyleWithCount[]) => void }) => {
   const [customStyles, setCustomStyles] = useState<StyleOption[]>([]);
@@ -84,7 +83,7 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
             <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Styles</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {customStyles.map((style) => (
-                <CustomStyleCard
+                <StyleCard
                   key={style.id}
                   styleId={style.id}
                   styleName={style.prompt || style.name}
@@ -93,6 +92,7 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
                   onClick={() => toggleStyle(style.id)}
                   count={selectedStylesMap[style.id] || 1}
                   onCountChange={(newCount) => handleCountChange(style.id, newCount)}
+                  prompt={style.prompt} // Pass the prompt for custom styles
                 />
               ))}
             </div>
@@ -102,7 +102,7 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
         <h3 className="text-2xl font-bold mb-6 text-center">Predefined Styles</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {predefinedStyles.map((style) => (
-            <StylePreviewCard
+            <StyleCard
               key={style.id}
               styleId={style.id}
               styleName={style.name}
