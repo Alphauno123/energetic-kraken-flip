@@ -9,11 +9,16 @@ interface StylePlaceholderImageProps {
   styleName: string;
   className?: string;
   imageUrl?: string; // New prop for the preview image URL
+  prompt?: string; // New prop to indicate if it's a custom style with a prompt
 }
 
-const StylePlaceholderImage = ({ styleId, styleName, className, imageUrl }: StylePlaceholderImageProps) => {
-  const backgroundClass = styleBackgroundClasses[styleId] || 'bg-gray-200 dark:bg-gray-700';
-  const IconComponent = styleIcons[styleId] || styleIcons['white-bg']; // Default to 'white-bg' icon if no specific icon is found
+const StylePlaceholderImage = ({ styleId, styleName, className, imageUrl, prompt }: StylePlaceholderImageProps) => {
+  // Determine the effective style ID for icon and background lookup
+  // If a prompt is provided or styleId starts with 'custom-', treat it as a generic custom style
+  const effectiveStyleId = prompt || styleId.startsWith('custom-') ? 'custom' : styleId;
+
+  const backgroundClass = styleBackgroundClasses[effectiveStyleId] || 'bg-gray-200 dark:bg-gray-700';
+  const IconComponent = styleIcons[effectiveStyleId] || styleIcons['white-bg']; // Default to 'white-bg' icon if no specific icon is found
 
   return (
     <div

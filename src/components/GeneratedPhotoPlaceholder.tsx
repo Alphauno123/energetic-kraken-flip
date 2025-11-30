@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { styleIcons, styleBackgroundClasses, styleOverlayClasses } from '@/utils/styles';
+import { styleOverlayClasses } from '@/utils/styles'; // Only need overlay classes here now
 import { Image as ImageIcon } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
-import { getStylePreviewImageUrl } from '@/utils/imageUtils'; // Import getStylePreviewImageUrl
+import { getStylePreviewImageUrl } from '@/utils/imageUtils';
+import StylePlaceholderImage from './StylePlaceholderImage'; // Import StylePlaceholderImage
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
@@ -15,6 +16,7 @@ interface GeneratedPhotoPlaceholderProps {
   uniqueId: string;
   isSelected: boolean;
   onToggleSelect: (uniqueId: string) => void;
+  prompt?: string; // Add prompt prop
 }
 
 const GeneratedPhotoPlaceholder = ({
@@ -25,16 +27,15 @@ const GeneratedPhotoPlaceholder = ({
   uniqueId,
   isSelected,
   onToggleSelect,
+  prompt, // Destructure prompt
 }: GeneratedPhotoPlaceholderProps) => {
-  // This component now exclusively handles generated photo placeholders.
   // The logic for 'original' images is handled by PhotoDetailDialog directly.
 
-  const effectiveStyleId = styleId.startsWith('custom-') ? 'custom' : styleId;
-  const backgroundClass = styleBackgroundClasses[effectiveStyleId] || 'bg-gray-200 dark:bg-gray-700';
-  const IconComponent = styleIcons[effectiveStyleId] || styleIcons['white-bg'];
-  const overlayClass = styleOverlayClasses[effectiveStyleId] || 'bg-transparent';
+  // Determine the effective style ID for overlay classes (still needed here)
+  const effectiveStyleIdForOverlay = prompt || styleId.startsWith('custom-') ? 'custom' : styleId;
+  const overlayClass = styleOverlayClasses[effectiveStyleIdForOverlay] || 'bg-transparent';
 
-  const previewImageUrl = getStylePreviewImageUrl(effectiveStyleId);
+  const previewImageUrl = getStylePreviewImageUrl(styleId); // Use original styleId for image URL
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening dialog when clicking checkbox
@@ -45,7 +46,6 @@ const GeneratedPhotoPlaceholder = ({
     <div
       className={cn(
         "relative w-full h-48 flex flex-col items-center justify-center text-white text-center text-sm font-semibold p-2 overflow-hidden",
-        backgroundClass,
         isSelected && "ring-2 ring-blue-500",
         className
       )}
@@ -58,6 +58,13 @@ const GeneratedPhotoPlaceholder = ({
       />
       {previewImageUrl ? (
         <>
+          {/* Use StylePlaceholderImage for background and icon fallback */}
+          <StylePlaceholderImage
+            styleId={styleId}
+            styleName={styleName}
+            prompt={prompt} // Pass prompt to StylePlaceholderImage
+            className="absolute inset-0" // Make it cover the whole area for background
+          />
           <img
             src={previewImageUrl}
             alt={`Generated Product Photo for ${styleName}`}
@@ -71,9 +78,16 @@ const GeneratedPhotoPlaceholder = ({
         </>
       ) : (
         <>
-          <IconComponent className="h-12 w-12 mb-2" />
-          <p className="text-lg font-bold line-clamp-2">{styleName}</p>
-          <p className="text-xs mt-1">Photo {index + 1}</p>
+          {/* Fallback if no previewImageUrl */}
+          <StylePlaceholderImage
+            styleId={styleId}
+            styleName={styleName}
+            prompt={prompt} // Pass prompt to StylePlaceholderImage
+            className="absolute inset-0" // Make it cover the whole area for background
+          />
+          <ImageIcon className="h-12 w-12 mb-2 z-10" />
+          <p className="text-lg font-bold line-clamp-2 z-10">{styleName}</p>
+          <p className="text-xs mt-1 z-10">Photo {index + 1}</p>
         </>
       )}
     </div>
