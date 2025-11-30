@@ -4,7 +4,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { styleIcons, styleBackgroundClasses, styleOverlayClasses } from '@/utils/styles';
 import { Image as ImageIcon } from 'lucide-react';
-import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
+import { Checkbox } from "@/components/ui/checkbox";
+import OriginalPhotoDisplay from './OriginalPhotoDisplay'; // Import the new component
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
@@ -12,9 +13,9 @@ interface GeneratedPhotoPlaceholderProps {
   index: number;
   className?: string;
   uploadedImage?: string | null;
-  uniqueId: string; // Added uniqueId for selection
-  isSelected: boolean; // Added isSelected prop
-  onToggleSelect: (uniqueId: string) => void; // Added onToggleSelect prop
+  uniqueId: string;
+  isSelected: boolean;
+  onToggleSelect: (uniqueId: string) => void;
 }
 
 const GeneratedPhotoPlaceholder = ({
@@ -27,8 +28,22 @@ const GeneratedPhotoPlaceholder = ({
   isSelected,
   onToggleSelect,
 }: GeneratedPhotoPlaceholderProps) => {
-  const effectiveStyleId = styleId.startsWith('custom-') ? 'custom' : styleId;
+  // Special handling for the "original" image
+  if (styleId === 'original' && uploadedImage) {
+    return (
+      <OriginalPhotoDisplay
+        uploadedImage={uploadedImage}
+        styleName={styleName}
+        uniqueId={uniqueId}
+        isSelected={isSelected}
+        onToggleSelect={onToggleSelect}
+        className={className}
+      />
+    );
+  }
 
+  // For generated photos
+  const effectiveStyleId = styleId.startsWith('custom-') ? 'custom' : styleId;
   const backgroundClass = styleBackgroundClasses[effectiveStyleId] || 'bg-gray-200 dark:bg-gray-700';
   const IconComponent = styleIcons[effectiveStyleId] || styleIcons['white-bg'];
   const overlayClass = styleOverlayClasses[effectiveStyleId] || 'bg-transparent';
@@ -38,41 +53,12 @@ const GeneratedPhotoPlaceholder = ({
     onToggleSelect(uniqueId);
   };
 
-  // Special handling for the "original" image
-  if (styleId === 'original' && uploadedImage) {
-    return (
-      <div
-        className={cn(
-          "relative w-full h-48 flex flex-col items-center justify-center text-white text-center text-sm font-semibold p-2 overflow-hidden",
-          "bg-gray-100 dark:bg-gray-800",
-          isSelected && "ring-2 ring-blue-500", // Add ring for selection
-          className
-        )}
-      >
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={() => onToggleSelect(uniqueId)}
-          onClick={handleCheckboxClick}
-          className="absolute top-3 left-3 z-40"
-        />
-        <img
-          src={uploadedImage}
-          alt={`Original Uploaded Product`}
-          className="max-h-full max-w-full object-contain rounded-lg"
-        />
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-white text-center z-10">
-          <p className="font-semibold">{styleName}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div
       className={cn(
         "relative w-full h-48 flex flex-col items-center justify-center text-white text-center text-sm font-semibold p-2 overflow-hidden",
         backgroundClass,
-        isSelected && "ring-2 ring-blue-500", // Add ring for selection
+        isSelected && "ring-2 ring-blue-500",
         className
       )}
     >
