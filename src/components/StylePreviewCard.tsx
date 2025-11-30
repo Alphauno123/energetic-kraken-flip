@@ -5,7 +5,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StylePlaceholderImage from './StylePlaceholderImage';
 import ImageCountSelector from './ImageCountSelector'; // Import the new component
-import { styles, StyleOption } from '@/utils/styles'; // Import styles from the new utility file
+// Removed: import { styles, StyleOption } from '@/utils/styles'; // Import styles from the new utility file
 
 interface StylePreviewCardProps {
   styleId: string; // New prop to pass to StylePlaceholderImage
