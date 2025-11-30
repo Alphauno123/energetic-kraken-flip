@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Share2, Copy } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
+import OriginalPhotoDisplay from './OriginalPhotoDisplay'; // Import OriginalPhotoDisplay
 import { toast } from 'sonner';
 import { getGenericPlaceholderUrl, getStylePreviewImageUrl } from '@/utils/imageUtils'; // Import getStylePreviewImageUrl
 
@@ -21,9 +22,12 @@ interface PhotoDetailDialogProps {
   index: number;
   children: React.ReactNode;
   uploadedImage?: string | null;
+  uniqueId: string; // Add uniqueId for OriginalPhotoDisplay
+  isSelected: boolean; // Add isSelected for OriginalPhotoDisplay
+  onToggleSelect: (uniqueId: string) => void; // Add onToggleSelect for OriginalPhotoDisplay
 }
 
-const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage }: PhotoDetailDialogProps) => {
+const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage, uniqueId, isSelected, onToggleSelect }: PhotoDetailDialogProps) => {
   const getImageSourceForAction = () => {
     if (styleId === 'original' && uploadedImage) {
       return uploadedImage;
@@ -84,7 +88,26 @@ const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage 
           </DialogDescription>
         </DialogHeader>
         <div className="p-6 pt-4">
-          <GeneratedPhotoPlaceholder styleId={styleId} styleName={styleName} index={index} uploadedImage={uploadedImage} className="w-full h-auto aspect-video rounded-lg mb-4" />
+          {styleId === 'original' && uploadedImage ? (
+            <OriginalPhotoDisplay
+              uploadedImage={uploadedImage}
+              styleName={styleName}
+              uniqueId={uniqueId}
+              isSelected={isSelected}
+              onToggleSelect={onToggleSelect}
+              className="w-full h-auto aspect-video rounded-lg mb-4"
+            />
+          ) : (
+            <GeneratedPhotoPlaceholder
+              styleId={styleId}
+              styleName={styleName}
+              index={index}
+              uniqueId={uniqueId}
+              isSelected={isSelected}
+              onToggleSelect={onToggleSelect}
+              className="w-full h-auto aspect-video rounded-lg mb-4"
+            />
+          )}
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <Button onClick={handleDownload} className="flex-1">
               <Download className="mr-2 h-4 w-4" /> Download
