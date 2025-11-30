@@ -39,11 +39,12 @@ export const predefinedStyles: StyleOption[] = [
   { id: 'white-bg', name: 'White Background', description: 'Classic e-commerce white background.' },
 ];
 
-export const getStyleNameById = (id: string, allStyles: StyleOption[]): string => {
-  const style = allStyles.find(s => s.id === id);
-  if (style?.isCustom && style.prompt) {
-    return style.prompt;
+// Updated getStyleNameById to use predefinedStyles internally and prioritize prompt for custom styles
+export const getStyleNameById = (id: string, prompt?: string): string => {
+  if (prompt) { // If a prompt is provided, it's a custom style
+    return prompt;
   }
+  const style = predefinedStyles.find(s => s.id === id);
   return style ? style.name : id.replace('-', ' '); // Fallback to formatted ID if not found
 };
 

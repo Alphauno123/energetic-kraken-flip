@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Expand } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
-import { getStyleNameById, predefinedStyles } from '@/utils/styles';
+import { getStyleNameById } from '@/utils/styles'; // Import the updated getStyleNameById
 import { getGenericPlaceholderUrl, getStylePreviewImageUrl } from '@/utils/imageUtils';
 import GeneratedPhotosActions from './GeneratedPhotosActions';
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     setSelectedPhotoUniqueIds((prevSelected) => {
       const newSet = new Set(prevSelected);
       if (newSet.has(uniqueId)) {
-        newSet.delete(uniqueId);
+        newSet.delete(newSet.has(uniqueId) ? uniqueId : '');
       } else {
         newSet.add(uniqueId);
       }
@@ -93,14 +93,6 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     // toast.success(`${itemsToDownload.length} photo(s) are downloading!`);
   };
 
-  // Helper to get the display name for a style, considering custom prompts
-  const getDisplayName = (photoData: { styleId: string; prompt?: string }) => {
-    if (photoData.prompt) {
-      return photoData.prompt;
-    }
-    return getStyleNameById(photoData.styleId, predefinedStyles);
-  };
-
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
@@ -120,7 +112,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
             <PhotoDetailDialog
               key="original-upload"
               styleId="original"
-              styleName="Original Upload"
+              styleName={getStyleNameById("original", "Original Upload")} // Use the updated utility
               index={0} // Original is always the first item conceptually
               uploadedImage={uploadedImage}
               uniqueId="original-upload"
@@ -149,7 +141,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
             <PhotoDetailDialog
               key={photoData.uniqueId}
               styleId={photoData.styleId}
-              styleName={getDisplayName(photoData)}
+              styleName={getStyleNameById(photoData.styleId, photoData.prompt)} // Use the updated utility
               index={uploadedImage ? index + 1 : index} // Adjust index if original is present
               uniqueId={photoData.uniqueId}
               isSelected={selectedPhotoUniqueIds.has(photoData.uniqueId)}
@@ -158,7 +150,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
                   styleId={photoData.styleId}
-                  styleName={getDisplayName(photoData)}
+                  styleName={getStyleNameById(photoData.styleId, photoData.prompt)} // Use the updated utility
                   index={uploadedImage ? index + 1 : index} // Adjust index if original is present
                   uniqueId={photoData.uniqueId}
                   isSelected={selectedPhotoUniqueIds.has(photoData.uniqueId)}
