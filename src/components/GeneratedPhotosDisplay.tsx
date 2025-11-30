@@ -6,9 +6,9 @@ import { Expand } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
 import { getStyleNameById, predefinedStyles } from '@/utils/styles';
-import { getGenericPlaceholderUrl } from '@/utils/imageUtils';
-import GeneratedPhotosActions from './GeneratedPhotosActions'; // Import the new component
-import { Button } from "@/components/ui/button"; // Ensure Button is imported for PhotoDetailDialog trigger
+import { getGenericPlaceholderUrl, getStylePreviewImageUrl } from '@/utils/imageUtils'; // Import getStylePreviewImageUrl
+import GeneratedPhotosActions from './GeneratedPhotosActions';
+import { Button } from "@/components/ui/button";
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string; prompt?: string }>;
@@ -56,19 +56,18 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       : allDisplayablePhotos; // If nothing selected, download all
 
     if (photosToDownload.length === 0) {
-      // This case should ideally be prevented by disabling the button, but as a fallback:
       console.warn("No photos selected or available to download.");
       return;
     }
 
-    // Simulate download logic (as per existing implementation)
     photosToDownload.forEach((photoData, index) => {
       const link = document.createElement('a');
       if (photoData.styleId === "original" && uploadedImage) {
         link.href = uploadedImage;
         link.download = `original-product-photo.png`;
       } else {
-        link.href = getGenericPlaceholderUrl(); // Use generic placeholder for generated images
+        // Use getStylePreviewImageUrl for generated photos for consistency with previews
+        link.href = getStylePreviewImageUrl(photoData.styleId);
         link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
       }
       document.body.appendChild(link);
