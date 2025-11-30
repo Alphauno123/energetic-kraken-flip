@@ -5,13 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { ThemeProvider } from "./components/ThemeProvider"; // ThemeProvider is already in main.tsx
+// Removed: import { ThemeProvider } from "./components/ThemeProvider"; // ThemeProvider is already in main.tsx
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+    {/* Removed: <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme"> */}
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -23,7 +23,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </ThemeProvider>
+    {/* Removed: </ThemeProvider> */}
   </QueryClientProvider>
 );
 
