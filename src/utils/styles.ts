@@ -8,9 +8,9 @@ import {
   Sparkles,
   User,
   Megaphone,
-  LucideIcon // Removed Square from direct import
+  Square, // Square is now correctly included here
+  LucideIcon
 } from 'lucide-react';
-import { Square } from 'lucide-react'; // Re-import Square specifically for its use as a component in styleIcons
 
 export interface StyleOption {
   id: string;
