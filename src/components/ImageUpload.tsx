@@ -7,7 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { UploadCloud, X } from 'lucide-react';
 
-const ImageUpload = () => {
+interface ImageUploadProps {
+  onImageUpload: (image: string | null) => void;
+}
+
+const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
   const [image, setImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -16,7 +20,9 @@ const ImageUpload = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result as string);
+        const result = reader.result as string;
+        setImage(result);
+        onImageUpload(result); // Pass the image up to the parent
       };
       reader.readAsDataURL(file);
     }
@@ -24,6 +30,7 @@ const ImageUpload = () => {
 
   const handleRemoveImage = () => {
     setImage(null);
+    onImageUpload(null); // Notify parent that image is removed
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Clear the file input
     }
