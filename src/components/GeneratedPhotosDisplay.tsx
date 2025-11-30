@@ -7,7 +7,8 @@ import { Download, Expand } from 'lucide-react';
 import { toast } from 'sonner';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
-import { getStyleNameById } from '@/utils/styles'; // Import getStyleNameById
+import { getStyleNameById } from '@/utils/styles';
+import { getGenericPlaceholderUrl } from '@/utils/imageUtils'; // Import from new utility
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string }>;
@@ -18,8 +19,6 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
   if (photos.length === 0) {
     return null;
   }
-
-  const getGenericPlaceholderUrl = () => "/placeholder.svg";
 
   const handleDownloadAll = () => {
     if (photos.length === 0) {
@@ -58,14 +57,14 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
             <PhotoDetailDialog
               key={photoData.uniqueId}
               styleId={photoData.styleId}
-              styleName={getStyleNameById(photoData.styleId)} // Pass the full style name
+              styleName={getStyleNameById(photoData.styleId)}
               index={index}
               uploadedImage={uploadedImage}
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
                   styleId={photoData.styleId}
-                  styleName={getStyleNameById(photoData.styleId)} // Pass the full style name
+                  styleName={getStyleNameById(photoData.styleId)}
                   index={index}
                   uploadedImage={uploadedImage}
                 />

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Share2, Copy } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import { toast } from 'sonner';
+import { getGenericPlaceholderUrl } from '@/utils/imageUtils'; // Import from new utility
 
 interface PhotoDetailDialogProps {
   styleId: string;
@@ -23,8 +24,6 @@ interface PhotoDetailDialogProps {
 }
 
 const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage }: PhotoDetailDialogProps) => {
-  const getGenericPlaceholderUrl = () => "/placeholder.svg";
-
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = uploadedImage || getGenericPlaceholderUrl();
@@ -70,7 +69,7 @@ const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage 
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] p-0">
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl font-bold">{styleName} Photo {index + 1}</DialogTitle> {/* Use styleName */}
+          <DialogTitle className="text-2xl font-bold">{styleName} Photo {index + 1}</DialogTitle>
           <DialogDescription>
             A closer look at your AI-generated product photo.
           </DialogDescription>
