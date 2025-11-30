@@ -41,32 +41,7 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
     toast.success("All photos are downloading!", { id: "download-toast" });
   };
 
-  const handleSharePhoto = async (photoData: { styleId: string; uniqueId: string }, index: number) => {
-    try {
-      // Share a link to the generic placeholder, or a more specific one if a backend existed
-      await navigator.clipboard.writeText(window.location.origin + getGenericPlaceholderUrl());
-      toast.success("Image link copied to clipboard!");
-    } catch (err) {
-      console.error("Failed to copy image link: ", err);
-      toast.error("Failed to copy link. Please try again.");
-    }
-  };
-
-  const handleCopyImage = async (photoData: { styleId: string; uniqueId: string }, index: number) => {
-    try {
-      const response = await fetch(getGenericPlaceholderUrl()); // Fetch generic placeholder
-      const blob = await response.blob();
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob,
-        }),
-      ]);
-      toast.success("Image copied to clipboard!");
-    } catch (err) {
-      console.error("Failed to copy image: ", err);
-      toast.error("Failed to copy image. Please try again.");
-    }
-  };
+  // Removed individual Share and Copy handlers from here as they are now in PhotoDetailDialog
 
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
@@ -82,22 +57,16 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {photos.map((photoData, index) => (
-            <div key={photoData.uniqueId} className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group">
-              <GeneratedPhotoPlaceholder styleId={photoData.styleId} index={index} />
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <PhotoDetailDialog styleId={photoData.styleId} index={index}>
+            <PhotoDetailDialog key={photoData.uniqueId} styleId={photoData.styleId} index={index}>
+              <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
+                <GeneratedPhotoPlaceholder styleId={photoData.styleId} index={index} />
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
-                    <Expand className="mr-2 h-4 w-4" /> View
+                    <Expand className="mr-2 h-4 w-4" /> View Details
                   </Button>
-                </PhotoDetailDialog>
-                <Button variant="secondary" size="sm" asChild>
-                  <a href={getGenericPlaceholderUrl()} download={`product-photo-${photoData.styleId}-${index + 1}.png`} className="flex items-center">
-                    <Download className="mr-2 h-4 w-4" /> Download
-                  </a>
-                </Button>
-                {/* Removed individual Share and Copy buttons from hover overlay to simplify, as they are in the dialog */}
+                </div>
               </div>
-            </div>
+            </PhotoDetailDialog>
           ))}
         </div>
       </CardContent>
