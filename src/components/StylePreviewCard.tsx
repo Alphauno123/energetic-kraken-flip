@@ -38,7 +38,10 @@ const StylePreviewCard = ({ styleId, styleName, description, isSelected, onClick
           <div className="absolute top-2 right-2 text-blue-500">
             <CheckCircle2 className="h-6 w-6 fill-blue-500 text-white" />
           </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+          <div
+            className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-center"
+            onClick={(e) => e.stopPropagation()} // Prevent clicks on this div from bubbling up to the card
+          >
             <ImageCountSelector
               count={count}
               onCountChange={onCountChange}
