@@ -16,7 +16,7 @@ interface GeneratedPhotosDisplayProps {
 }
 
 const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDisplayProps) => {
-  if (photos.length === 0) {
+  if (photos.length === 0 && !uploadedImage) { // Also check for uploadedImage
     return null;
   }
 
@@ -72,20 +72,17 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
               uploadedImage={uploadedImage}
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
-                <div className="w-full h-48 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 p-2">
-                  <img
-                    src={uploadedImage}
-                    alt="Original Uploaded Product"
-                    className="max-h-full max-w-full object-contain rounded-lg"
-                  />
-                </div>
+                <GeneratedPhotoPlaceholder
+                  styleId="original"
+                  styleName="Original Upload"
+                  index={0}
+                  uploadedImage={uploadedImage}
+                  className="w-full h-48" // Ensure it takes full width and height of its container
+                />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
                     <Expand className="mr-2 h-4 w-4" /> View Original
                   </Button>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-white text-center">
-                  <p className="font-semibold">Original Upload</p>
                 </div>
               </div>
             </PhotoDetailDialog>
