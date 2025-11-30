@@ -6,9 +6,10 @@ import { Expand } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
 import { getStyleNameById, predefinedStyles } from '@/utils/styles';
-import { getGenericPlaceholderUrl, getStylePreviewImageUrl } from '@/utils/imageUtils'; // Import getStylePreviewImageUrl
+import { getGenericPlaceholderUrl, getStylePreviewImageUrl } from '@/utils/imageUtils';
 import GeneratedPhotosActions from './GeneratedPhotosActions';
 import { Button } from "@/components/ui/button";
+import OriginalPhotoDisplay from './OriginalPhotoDisplay'; // Ensure this is imported
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string; prompt?: string }>;
@@ -22,9 +23,8 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     return null;
   }
 
-  const allDisplayablePhotos = uploadedImage
-    ? [{ styleId: "original", uniqueId: "original-upload", prompt: "Original Upload" }, ...photos]
-    : photos;
+  // Determine the total number of displayable items for actions
+  const totalDisplayableItems = uploadedImage ? photos.length + 1 : photos.length;
 
   const handleToggleSelect = (uniqueId: string) => {
     setSelectedPhotoUniqueIds((prevSelected) => {
@@ -39,7 +39,11 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
   };
 
   const handleSelectAll = () => {
-    const allIds = new Set(allDisplayablePhotos.map((p) => p.uniqueId));
+    const allIds = new Set<string>();
+    if (uploadedImage) {
+      allIds.add("original-upload");
+    }
+    photos.forEach((p) => allIds.add(p.uniqueId));
     setSelectedPhotoUniqueIds(allIds);
   };
 
@@ -47,36 +51,46 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     setSelectedPhotoUniqueIds(new Set());
   };
 
-  const isAllSelected = selectedPhotoUniqueIds.size === allDisplayablePhotos.length;
+  const isAllSelected = selectedPhotoUniqueIds.size === totalDisplayableItems && totalDisplayableItems > 0;
   const isAnySelected = selectedPhotoUniqueIds.size > 0;
 
   const handleDownloadSelected = () => {
-    const photosToDownload = isAnySelected
-      ? allDisplayablePhotos.filter((p) => selectedPhotoUniqueIds.has(p.uniqueId))
-      : allDisplayablePhotos; // If nothing selected, download all
+    const itemsToDownload: Array<{ styleId: string; uniqueId: string; prompt?: string; imageUrl?: string }> = [];
 
-    if (photosToDownload.length === 0) {
+    if (uploadedImage && (selectedPhotoUniqueIds.has("original-upload") || !isAnySelected)) {
+      itemsToDownload.push({
+        styleId: "original",
+        uniqueId: "original-upload",
+        prompt: "Original Upload",
+        imageUrl: uploadedImage,
+      });
+    }
+
+    photos.forEach((photoData, index) => {
+      if (selectedPhotoUniqueIds.has(photoData.uniqueId) || !isAnySelected) {
+        itemsToDownload.push({
+          ...photoData,
+          imageUrl: getStylePreviewImageUrl(photoData.styleId),
+        });
+      }
+    });
+
+    if (itemsToDownload.length === 0) {
       console.warn("No photos selected or available to download.");
       return;
     }
 
-    photosToDownload.forEach((photoData, index) => {
+    itemsToDownload.forEach((item, index) => {
       const link = document.createElement('a');
-      if (photoData.styleId === "original" && uploadedImage) {
-        link.href = uploadedImage;
-        link.download = `original-product-photo.png`;
-      } else {
-        // Use getStylePreviewImageUrl for generated photos for consistency with previews
-        link.href = getStylePreviewImageUrl(photoData.styleId);
-        link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
-      }
+      link.href = item.imageUrl || getGenericPlaceholderUrl(); // Fallback to generic placeholder
+      link.download = `${item.styleId === 'original' ? 'original-product-photo' : `product-photo-${item.styleId}-${index + 1}`}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     });
 
     // Using toast for feedback (assuming it's handled by the parent App component)
-    // toast.success(`${photosToDownload.length} photo(s) are downloading!`);
+    // toast.success(`${itemsToDownload.length} photo(s) are downloading!`);
   };
 
   // Helper to get the display name for a style, considering custom prompts
@@ -91,7 +105,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
         <GeneratedPhotosActions
-          totalPhotos={allDisplayablePhotos.length}
+          totalPhotos={totalDisplayableItems}
           selectedCount={selectedPhotoUniqueIds.size}
           isAllSelected={isAllSelected}
           isAnySelected={isAnySelected}
@@ -102,24 +116,54 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {allDisplayablePhotos.map((photoData, index) => (
+          {uploadedImage && (
+            <PhotoDetailDialog
+              key="original-upload"
+              styleId="original"
+              styleName="Original Upload"
+              index={0} // Original is always the first item conceptually
+              uploadedImage={uploadedImage}
+              uniqueId="original-upload"
+              isSelected={selectedPhotoUniqueIds.has("original-upload")}
+              onToggleSelect={handleToggleSelect}
+            >
+              <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
+                <OriginalPhotoDisplay
+                  uploadedImage={uploadedImage}
+                  styleName="Original Upload"
+                  uniqueId="original-upload"
+                  isSelected={selectedPhotoUniqueIds.has("original-upload")}
+                  onToggleSelect={handleToggleSelect}
+                  className="w-full h-48"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Button variant="secondary" size="sm" className="flex items-center">
+                    <Expand className="mr-2 h-4 w-4" /> View Details
+                  </Button>
+                </div>
+              </div>
+            </PhotoDetailDialog>
+          )}
+
+          {photos.map((photoData, index) => (
             <PhotoDetailDialog
               key={photoData.uniqueId}
               styleId={photoData.styleId}
               styleName={getDisplayName(photoData)}
-              index={index}
-              uploadedImage={uploadedImage}
+              index={uploadedImage ? index + 1 : index} // Adjust index if original is present
+              uniqueId={photoData.uniqueId}
+              isSelected={selectedPhotoUniqueIds.has(photoData.uniqueId)}
+              onToggleSelect={handleToggleSelect}
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
                   styleId={photoData.styleId}
                   styleName={getDisplayName(photoData)}
-                  index={index}
-                  uploadedImage={uploadedImage}
-                  className="w-full h-48"
+                  index={uploadedImage ? index + 1 : index} // Adjust index if original is present
                   uniqueId={photoData.uniqueId}
                   isSelected={selectedPhotoUniqueIds.has(photoData.uniqueId)}
                   onToggleSelect={handleToggleSelect}
+                  className="w-full h-48"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
