@@ -3,6 +3,12 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UploadCloud, Palette, Image, Download } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"; // Import Accordion components
 
 const steps = [
   {
@@ -34,20 +40,22 @@ const HowItWorks = () => {
         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-12 text-gray-900 dark:text-gray-50">
           How It Works
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => (
-            <Card key={index} className="flex flex-col items-center text-center p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-center mb-4">
-                  {step.icon}
-                </div>
-                <CardTitle className="text-xl font-semibold">{step.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">{step.description}</p>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="max-w-3xl mx-auto">
+          <Accordion type="single" collapsible className="w-full">
+            {steps.map((step, index) => (
+              <AccordionItem key={index} value={`item-${index}`} className="border-b border-gray-200 dark:border-gray-700">
+                <AccordionTrigger className="flex items-center justify-between w-full p-4 text-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                  <div className="flex items-center gap-4">
+                    {step.icon}
+                    <span>{step.title}</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-4 text-left text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800">
+                  {step.description}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </section>
