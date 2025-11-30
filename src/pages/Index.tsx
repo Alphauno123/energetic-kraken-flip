@@ -82,9 +82,11 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const showResetButton = !!uploadedImage || selectedStylesWithCounts.length > 0 || generatedPhotos.length > 0;
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <Header onReset={handleReset} showResetButton={!!uploadedImage} />
+      <Header onReset={handleReset} showResetButton={showResetButton} />
       <HeroSection onUploadClick={scrollToImageUpload} />
       <HowItWorks />
       <main className="flex-grow container mx-auto px-4 py-12">
