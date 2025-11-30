@@ -1,27 +1,27 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Import CardDescription
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import StylePlaceholderImage from './StylePlaceholderImage'; // Import the new component
 
 interface StyleOption {
   id: string;
   name: string;
   description: string;
-  image: string; // Placeholder for a style preview image
 }
 
 const styles: StyleOption[] = [
-  { id: 'studio', name: 'Studio Shot', description: 'Clean, professional studio background.', image: '/placeholder.svg' },
-  { id: 'lifestyle', name: 'Lifestyle Scene', description: 'Product in a realistic, engaging environment.', image: '/placeholder.svg' },
-  { id: 'seasonal', name: 'Seasonal Theme', description: 'Holiday or seasonal specific backgrounds.', image: '/placeholder.svg' },
-  { id: 'flatlay', name: 'Flatlay', description: 'Overhead shot with complementary props.', image: '/placeholder.svg' },
-  { id: 'tiktok', name: 'TikTok Style', description: 'Dynamic, trendy visuals for social media.', image: '/placeholder.svg' },
-  { id: 'in-use', name: 'Product in Use', description: 'Showcasing the product being used by a model.', image: '/placeholder.svg' },
-  { id: 'social-ad', name: 'Social Media Ad', description: 'Optimized for various social media platforms.', image: '/placeholder.svg' },
-  { id: 'white-bg', name: 'White Background', description: 'Classic e-commerce white background.', image: '/placeholder.svg' },
+  { id: 'studio', name: 'Studio Shot', description: 'Clean, professional studio background.' },
+  { id: 'lifestyle', name: 'Lifestyle Scene', description: 'Product in a realistic, engaging environment.' },
+  { id: 'seasonal', name: 'Seasonal Theme', description: 'Holiday or seasonal specific backgrounds.' },
+  { id: 'flatlay', name: 'Flatlay', description: 'Overhead shot with complementary props.' },
+  { id: 'tiktok', name: 'TikTok Style', description: 'Dynamic, trendy visuals for social media.' },
+  { id: 'in-use', name: 'Product in Use', description: 'Showcasing the product being used by a model.' },
+  { id: 'social-ad', name: 'Social Media Ad', description: 'Optimized for various social media platforms.' },
+  { id: 'white-bg', name: 'White Background', description: 'Classic e-commerce white background.' },
 ];
 
 const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: string[]) => void }) => {
@@ -59,7 +59,7 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: st
               )}
               onClick={() => toggleStyle(style.id)}
             >
-              <img src={style.image} alt={style.name} className="w-full h-32 object-cover bg-gray-100 dark:bg-gray-700" />
+              <StylePlaceholderImage styleName={style.name} /> {/* Use the new component here */}
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-1">{style.name}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{style.description}</p>
