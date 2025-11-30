@@ -8,7 +8,7 @@ import {
   Sparkles,
   User,
   Megaphone,
-  Square, // Square is now correctly included here
+  Square,
   LucideIcon
 } from 'lucide-react';
 
@@ -60,4 +60,15 @@ export const styleBackgroundClasses: Record<string, string> = {
   'in-use': 'bg-gradient-to-br from-yellow-300 to-lime-400 dark:from-yellow-700 dark:to-lime-900',
   'social-ad': 'bg-gradient-to-br from-indigo-300 to-teal-400 dark:from-indigo-700 dark:to-teal-900',
   'white-bg': 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900',
+};
+
+export const styleOverlayClasses: Record<string, string> = {
+  'studio': 'bg-gray-700/20',
+  'lifestyle': 'bg-green-700/20',
+  'seasonal': 'bg-red-700/20',
+  'flatlay': 'bg-purple-700/20',
+  'tiktok': 'bg-cyan-700/20',
+  'in-use': 'bg-yellow-700/20',
+  'social-ad': 'bg-indigo-700/20',
+  'white-bg': 'bg-gray-500/10',
 };

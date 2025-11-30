@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { styleIcons, styleBackgroundClasses } from '@/utils/styles';
+import { styleIcons, styleBackgroundClasses, styleOverlayClasses } from '@/utils/styles'; // Import styleOverlayClasses
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
@@ -15,6 +15,7 @@ interface GeneratedPhotoPlaceholderProps {
 const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploadedImage }: GeneratedPhotoPlaceholderProps) => {
   const backgroundClass = styleBackgroundClasses[styleId] || 'bg-gray-200 dark:bg-gray-700';
   const IconComponent = styleIcons[styleId] || styleIcons['white-bg']; // Default to 'white-bg' icon
+  const overlayClass = styleOverlayClasses[styleId] || 'bg-transparent'; // Get the overlay class
 
   return (
     <div
@@ -31,6 +32,8 @@ const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploa
             alt={`Generated Product Photo for ${styleName}`}
             className="absolute inset-0 w-full h-full object-contain"
           />
+          {/* Apply the overlay */}
+          <div className={cn("absolute inset-0", overlayClass, "mix-blend-multiply")}></div>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white text-center z-10">
             <p className="text-lg font-bold">{styleName}</p>
             <p className="text-sm mt-1">Photo {index + 1}</p>
