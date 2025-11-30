@@ -3,12 +3,31 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import StylePreviewCard from './StylePreviewCard'; // Import the new component
-import { styles, SelectedStyleWithCount } from '@/utils/styles'; // Import styles and SelectedStyleWithCount from the new utility file
+import StylePreviewCard from './StylePreviewCard';
+import CustomStyleInput from './CustomStyleInput'; // Import the new component
+import { predefinedStyles, SelectedStyleWithCount, StyleOption, getStyleNameById } from '@/utils/styles'; // Import predefinedStyles and getStyleNameById
 
 const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: SelectedStyleWithCount[]) => void }) => {
-  // State to store selected styles and their counts
+  const [customStyles, setCustomStyles] = useState<StyleOption[]>([]);
   const [selectedStylesMap, setSelectedStylesMap] = useState<Record<string, number>>({});
+
+  const allAvailableStyles = [...predefinedStyles, ...customStyles];
+
+  const handleAddCustomStyle = (prompt: string) => {
+    const newCustomStyle: StyleOption = {
+      id: `custom-${Date.now()}`, // Unique ID for custom style
+      name: prompt, // Use prompt as name for display in card
+      description: 'User-defined AI style',
+      isCustom: true,
+      prompt: prompt,
+    };
+    setCustomStyles((prev) => [...prev, newCustomStyle]);
+    // Automatically select the new custom style with a count of 1
+    setSelectedStylesMap((prevSelected) => ({
+      ...prevSelected,
+      [newCustomStyle.id]: 1,
+    }));
+  };
 
   const toggleStyle = (styleId: string) => {
     setSelectedStylesMap((prevSelected) => {
@@ -30,10 +49,14 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
   };
 
   const handleGenerateClick = () => {
-    const stylesToGenerate: SelectedStyleWithCount[] = Object.entries(selectedStylesMap).map(([id, count]) => ({
-      id,
-      count,
-    }));
+    const stylesToGenerate: SelectedStyleWithCount[] = Object.entries(selectedStylesMap).map(([id, count]) => {
+      const styleOption = allAvailableStyles.find(s => s.id === id);
+      return {
+        id,
+        count,
+        ...(styleOption?.isCustom && { prompt: styleOption.prompt }), // Include prompt for custom styles
+      };
+    });
     onSelectStyles(stylesToGenerate);
   };
 
@@ -52,16 +75,20 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="mb-8">
+          <CustomStyleInput onAddCustomStyle={handleAddCustomStyle} />
+        </div>
+        <h3 className="text-2xl font-bold mb-6 text-center">Predefined Styles</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {styles.map((style) => (
+          {allAvailableStyles.map((style) => (
             <StylePreviewCard
               key={style.id}
-              styleId={style.id} // Pass the style.id
-              styleName={style.name}
+              styleId={style.isCustom ? 'custom' : style.id} // Use 'custom' for icon/background lookup
+              styleName={style.isCustom ? style.prompt || style.name : style.name} // Display prompt for custom
               description={style.description}
               isSelected={!!selectedStylesMap[style.id]}
               onClick={() => toggleStyle(style.id)}
-              count={selectedStylesMap[style.id] || 1} // Pass current count or default to 1
+              count={selectedStylesMap[style.id] || 1}
               onCountChange={(newCount) => handleCountChange(style.id, newCount)}
             />
           ))}

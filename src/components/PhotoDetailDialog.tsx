@@ -17,7 +17,7 @@ import { getGenericPlaceholderUrl } from '@/utils/imageUtils'; // Import from ne
 
 interface PhotoDetailDialogProps {
   styleId: string;
-  styleName: string; // New prop for the full style name
+  styleName: string; // New prop for the full style name (can be prompt for custom)
   index: number;
   children: React.ReactNode;
   uploadedImage?: string | null;

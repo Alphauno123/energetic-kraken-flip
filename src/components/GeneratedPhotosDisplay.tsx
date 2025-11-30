@@ -7,16 +7,16 @@ import { Download, Expand, Image as ImageIcon } from 'lucide-react'; // Import I
 import { toast } from 'sonner';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
-import { getStyleNameById } from '@/utils/styles';
+import { getStyleNameById, predefinedStyles } from '@/utils/styles'; // Import predefinedStyles
 import { getGenericPlaceholderUrl } from '@/utils/imageUtils';
 
 interface GeneratedPhotosDisplayProps {
-  photos: Array<{ styleId: string; uniqueId: string }>;
+  photos: Array<{ styleId: string; uniqueId: string; prompt?: string }>; // Include prompt for custom styles
   uploadedImage: string | null;
 }
 
 const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDisplayProps) => {
-  if (photos.length === 0 && !uploadedImage) { // Also check for uploadedImage
+  if (photos.length === 0 && !uploadedImage) {
     return null;
   }
 
@@ -51,6 +51,18 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     toast.success("All photos are downloading!", { id: "download-toast" });
   };
 
+  // Helper to get the display name for a style, considering custom prompts
+  const getDisplayName = (photoData: { styleId: string; prompt?: string }) => {
+    if (photoData.prompt) {
+      return photoData.prompt;
+    }
+    // For predefined styles, we need to pass all available styles to getStyleNameById
+    // Since GeneratedPhotosDisplay doesn't know about customStyles state from StyleSelector,
+    // we'll just use predefinedStyles for lookup here. This is a limitation of the current
+    // component structure for displaying generated photos.
+    return getStyleNameById(photoData.styleId, predefinedStyles);
+  };
+
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
@@ -66,7 +78,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {uploadedImage && (
             <PhotoDetailDialog
-              styleId="original" // A unique ID for the original image
+              styleId="original"
               styleName="Original Upload"
               index={0}
               uploadedImage={uploadedImage}
@@ -77,7 +89,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
                   styleName="Original Upload"
                   index={0}
                   uploadedImage={uploadedImage}
-                  className="w-full h-48" // Ensure it takes full width and height of its container
+                  className="w-full h-48"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
@@ -92,14 +104,14 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
             <PhotoDetailDialog
               key={photoData.uniqueId}
               styleId={photoData.styleId}
-              styleName={getStyleNameById(photoData.styleId)}
+              styleName={getDisplayName(photoData)} // Use helper for display name
               index={index}
               uploadedImage={uploadedImage}
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
                   styleId={photoData.styleId}
-                  styleName={getStyleNameById(photoData.styleId)}
+                  styleName={getDisplayName(photoData)} // Use helper for display name
                   index={index}
                   uploadedImage={uploadedImage}
                 />

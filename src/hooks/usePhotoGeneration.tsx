@@ -6,6 +6,7 @@ import { SelectedStyleWithCount } from '@/utils/styles'; // Import SelectedStyle
 interface GeneratedPhoto {
   styleId: string;
   uniqueId: string;
+  prompt?: string; // Include prompt for custom styles
 }
 
 interface UsePhotoGenerationResult {
@@ -58,7 +59,11 @@ export function usePhotoGeneration(): UsePhotoGenerationResult {
 
         stylesWithCounts.forEach(style => {
           for (let i = 0; i < style.count; i++) {
-            simulatedPhotosData.push({ styleId: style.id, uniqueId: `${style.id}-${i}-${Date.now()}` });
+            simulatedPhotosData.push({
+              styleId: style.id,
+              uniqueId: `${style.id}-${i}-${Date.now()}`,
+              ...(style.prompt && { prompt: style.prompt }), // Add prompt if it's a custom style
+            });
           }
         });
         setGeneratedPhotos(simulatedPhotosData);

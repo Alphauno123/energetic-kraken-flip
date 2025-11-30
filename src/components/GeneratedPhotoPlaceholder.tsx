@@ -7,16 +7,19 @@ import { Image as ImageIcon } from 'lucide-react'; // Import Image icon for orig
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
-  styleName: string; // New prop for the full style name
+  styleName: string; // New prop for the full style name (can be prompt for custom)
   index: number;
   className?: string;
   uploadedImage?: string | null;
 }
 
 const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploadedImage }: GeneratedPhotoPlaceholderProps) => {
-  const backgroundClass = styleBackgroundClasses[styleId] || 'bg-gray-200 dark:bg-gray-700';
-  const IconComponent = styleIcons[styleId] || styleIcons['white-bg']; // Default to 'white-bg' icon
-  const overlayClass = styleOverlayClasses[styleId] || 'bg-transparent'; // Get the overlay class
+  // Use 'custom' as the key for custom styles to get generic icon/background/overlay
+  const effectiveStyleId = styleId.startsWith('custom-') ? 'custom' : styleId;
+
+  const backgroundClass = styleBackgroundClasses[effectiveStyleId] || 'bg-gray-200 dark:bg-gray-700';
+  const IconComponent = styleIcons[effectiveStyleId] || styleIcons['white-bg']; // Default to 'white-bg' icon
+  const overlayClass = styleOverlayClasses[effectiveStyleId] || 'bg-transparent'; // Get the overlay class
 
   // Special handling for the "original" image
   if (styleId === 'original' && uploadedImage) {
@@ -59,14 +62,14 @@ const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploa
           {/* Apply the overlay on top of the product image and background */}
           <div className={cn("absolute inset-0", overlayClass, "mix-blend-multiply z-20")}></div>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white text-center z-30">
-            <p className="text-lg font-bold">{styleName}</p>
+            <p className="text-lg font-bold line-clamp-2">{styleName}</p> {/* Added line-clamp for long prompts */}
             <p className="text-sm mt-1">Photo {index + 1}</p>
           </div>
         </>
       ) : (
         <>
           <IconComponent className="h-12 w-12 mb-2" />
-          <p className="text-lg font-bold">{styleName}</p>
+          <p className="text-lg font-bold line-clamp-2">{styleName}</p> {/* Added line-clamp for long prompts */}
           <p className="text-xs mt-1">Photo {index + 1}</p>
         </>
       )}

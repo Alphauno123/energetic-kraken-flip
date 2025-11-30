@@ -9,22 +9,26 @@ import {
   User,
   Megaphone,
   Square,
-  LucideIcon
+  LucideIcon,
+  Type, // New icon for custom styles
 } from 'lucide-react';
 
 export interface StyleOption {
   id: string;
   name: string;
   description: string;
+  isCustom?: boolean; // New field to identify custom styles
+  prompt?: string; // New field to store the custom prompt
 }
 
 // Define a type for the selected styles with their counts
 export interface SelectedStyleWithCount {
   id: string;
   count: number;
+  prompt?: string; // Include prompt for custom styles
 }
 
-export const styles: StyleOption[] = [
+export const predefinedStyles: StyleOption[] = [
   { id: 'studio', name: 'Studio Shot', description: 'Clean, professional studio background.' },
   { id: 'lifestyle', name: 'Lifestyle Scene', description: 'Product in a realistic, engaging environment.' },
   { id: 'seasonal', name: 'Seasonal Theme', description: 'Holiday or seasonal specific backgrounds.' },
@@ -35,8 +39,11 @@ export const styles: StyleOption[] = [
   { id: 'white-bg', name: 'White Background', description: 'Classic e-commerce white background.' },
 ];
 
-export const getStyleNameById = (id: string): string => {
-  const style = styles.find(s => s.id === id);
+export const getStyleNameById = (id: string, allStyles: StyleOption[]): string => {
+  const style = allStyles.find(s => s.id === id);
+  if (style?.isCustom && style.prompt) {
+    return style.prompt;
+  }
   return style ? style.name : id.replace('-', ' '); // Fallback to formatted ID if not found
 };
 
@@ -49,6 +56,7 @@ export const styleIcons: Record<string, LucideIcon> = {
   'in-use': User,
   'social-ad': Megaphone,
   'white-bg': Square,
+  'custom': Type, // Generic icon for custom styles
 };
 
 export const styleBackgroundClasses: Record<string, string> = {
@@ -60,6 +68,7 @@ export const styleBackgroundClasses: Record<string, string> = {
   'in-use': 'bg-gradient-to-br from-yellow-300 to-lime-400 dark:from-yellow-700 dark:to-lime-900',
   'social-ad': 'bg-gradient-to-br from-indigo-300 to-teal-400 dark:from-indigo-700 dark:to-teal-900',
   'white-bg': 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900',
+  'custom': 'bg-gradient-to-br from-indigo-400 to-purple-500 dark:from-indigo-700 dark:to-purple-900', // Generic background for custom styles
 };
 
 export const styleOverlayClasses: Record<string, string> = {
@@ -71,4 +80,5 @@ export const styleOverlayClasses: Record<string, string> = {
   'in-use': 'bg-yellow-700/20',
   'social-ad': 'bg-indigo-700/20',
   'white-bg': 'bg-gray-500/10',
+  'custom': 'bg-indigo-700/20', // Generic overlay for custom styles
 };
