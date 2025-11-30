@@ -21,7 +21,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
   }
 
   const handleDownloadAll = () => {
-    if (photos.length === 0) {
+    if (photos.length === 0 && !uploadedImage) {
       toast.info("No photos to download.");
       return;
     }
@@ -38,9 +38,10 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       document.body.removeChild(link);
     }
 
+    // Download each generated photo (using generic placeholder for simulation)
     photos.forEach((photoData, index) => {
       const link = document.createElement('a');
-      link.href = uploadedImage || getGenericPlaceholderUrl(); // Use uploadedImage as a placeholder for generated images
+      link.href = getGenericPlaceholderUrl(); // Use generic placeholder for generated images
       link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
       document.body.appendChild(link);
       link.click();
