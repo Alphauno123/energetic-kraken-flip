@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Share2 } from 'lucide-react'; // Import Share2 icon
+import { Download, Share2, Copy } from 'lucide-react'; // Import Copy icon
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner'; // Import toast for user feedback
 
@@ -46,6 +46,22 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
     }
   };
 
+  const handleCopyImage = async (photoUrl: string) => {
+    try {
+      const response = await fetch(photoUrl);
+      const blob = await response.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob,
+        }),
+      ]);
+      toast.success("Image copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy image: ", err);
+      toast.error("Failed to copy image. Please try again.");
+    }
+  };
+
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
@@ -73,7 +89,10 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
                   </a>
                 </Button>
                 <Button variant="secondary" size="sm" onClick={() => handleSharePhoto(photoUrl)} className="flex items-center">
-                  <Share2 className="mr-2 h-4 w-4" /> Share
+                  <Share2 className="mr-2 h-4 w-4" /> Share Link
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => handleCopyImage(photoUrl)} className="flex items-center">
+                  <Copy className="mr-2 h-4 w-4" /> Copy Image
                 </Button>
               </div>
             </div>
