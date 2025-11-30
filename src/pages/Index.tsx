@@ -7,10 +7,10 @@ import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
-import { ModeToggle } from "@/components/ModeToggle"; // Import ModeToggle
+import Header from "@/components/Header"; // Import the new Header component
 import React, { useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// Removed RotateCcw and Button imports as they are now in Header
+// Removed ModeToggle import as it is now in Header
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
@@ -81,17 +81,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <Header onReset={handleReset} showResetButton={!!uploadedImage} /> {/* Use the new Header component */}
       <HeroSection onUploadClick={scrollToImageUpload} />
       <HowItWorks />
       <main className="flex-grow container mx-auto px-4 py-12">
-        <div className="flex justify-end items-center gap-4 mb-8"> {/* Added flex container for buttons */}
-          {uploadedImage && (
-            <Button variant="outline" onClick={handleReset} className="flex items-center gap-2">
-              <RotateCcw className="h-4 w-4" /> Start Over
-            </Button>
-          )}
-          <ModeToggle /> {/* Added the ModeToggle component here */}
-        </div>
+        {/* Removed the old flex container for buttons */}
         <div ref={imageUploadRef}>
           <ImageUpload onImageUpload={handleImageUpload} />
         </div>
