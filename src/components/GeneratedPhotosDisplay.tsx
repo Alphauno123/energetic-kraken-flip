@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Download, Expand, CheckSquare, Square } from 'lucide-react'; // Import CheckSquare and Square for select all/none
-import { toast } from 'sonner';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Expand } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
 import { getStyleNameById, predefinedStyles } from '@/utils/styles';
 import { getGenericPlaceholderUrl } from '@/utils/imageUtils';
+import GeneratedPhotosActions from './GeneratedPhotosActions'; // Import the new component
+import { Button } from "@/components/ui/button"; // Ensure Button is imported for PhotoDetailDialog trigger
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string; prompt?: string }>;
@@ -56,12 +56,12 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       : allDisplayablePhotos; // If nothing selected, download all
 
     if (photosToDownload.length === 0) {
-      toast.info("No photos to download.");
+      // This case should ideally be prevented by disabling the button, but as a fallback:
+      console.warn("No photos selected or available to download.");
       return;
     }
 
-    toast.loading("Preparing your photos for download...", { id: "download-toast" });
-
+    // Simulate download logic (as per existing implementation)
     photosToDownload.forEach((photoData, index) => {
       const link = document.createElement('a');
       if (photoData.styleId === "original" && uploadedImage) {
@@ -76,7 +76,8 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       document.body.removeChild(link);
     });
 
-    toast.success(`${photosToDownload.length} photo(s) are downloading!`, { id: "download-toast" });
+    // Using toast for feedback (assuming it's handled by the parent App component)
+    // toast.success(`${photosToDownload.length} photo(s) are downloading!`);
   };
 
   // Helper to get the display name for a style, considering custom prompts
@@ -84,39 +85,21 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     if (photoData.prompt) {
       return photoData.prompt;
     }
-    // For predefined styles, we need to pass all available styles to getStyleNameById
-    // Since GeneratedPhotosDisplay doesn't know about customStyles state from StyleSelector,
-    // we'll just use predefinedStyles for lookup here. This is a limitation of the current
-    // component structure for displaying generated photos.
     return getStyleNameById(photoData.styleId, predefinedStyles);
   };
 
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
-        <CardTitle className="text-3xl font-bold">Your AI-Generated Product Photos</CardTitle>
-        <CardDescription className="text-gray-600">
-          Here are the stunning photos generated based on your product and selected styles.
-        </CardDescription>
-        <div className="flex flex-col sm:flex-row justify-center gap-3 mt-4">
-          <Button onClick={handleDownloadSelected} className="py-3 text-lg" disabled={photos.length === 0 && !uploadedImage}>
-            <Download className="mr-2 h-5 w-5" /> {isAnySelected ? `Download ${selectedPhotoUniqueIds.size} Selected` : "Download All Photos"}
-          </Button>
-          {allDisplayablePhotos.length > 0 && (
-            <Button
-              variant="outline"
-              onClick={isAllSelected ? handleDeselectAll : handleSelectAll}
-              className="py-3 text-lg"
-            >
-              {isAllSelected ? (
-                <Square className="mr-2 h-5 w-5" />
-              ) : (
-                <CheckSquare className="mr-2 h-5 w-5" />
-              )}
-              {isAllSelected ? "Deselect All" : "Select All"}
-            </Button>
-          )}
-        </div>
+        <GeneratedPhotosActions
+          totalPhotos={allDisplayablePhotos.length}
+          selectedCount={selectedPhotoUniqueIds.size}
+          isAllSelected={isAllSelected}
+          isAnySelected={isAnySelected}
+          onDownloadSelected={handleDownloadSelected}
+          onSelectAll={handleSelectAll}
+          onDeselectAll={handleDeselectAll}
+        />
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -126,7 +109,7 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
               styleId={photoData.styleId}
               styleName={getDisplayName(photoData)}
               index={index}
-              uploadedImage={photoData.styleId === "original" ? uploadedImage : uploadedImage} // Pass uploadedImage for generated too
+              uploadedImage={photoData.styleId === "original" ? uploadedImage : uploadedImage}
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
