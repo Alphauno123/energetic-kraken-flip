@@ -3,12 +3,12 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Expand } from 'lucide-react';
+import { Download, Expand, Image as ImageIcon } from 'lucide-react'; // Import Image icon for the original photo
 import { toast } from 'sonner';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
 import { getStyleNameById } from '@/utils/styles';
-import { getGenericPlaceholderUrl } from '@/utils/imageUtils'; // Import from new utility
+import { getGenericPlaceholderUrl } from '@/utils/imageUtils';
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string }>;
@@ -28,9 +28,19 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
 
     toast.loading("Preparing your photos for download...", { id: "download-toast" });
 
+    // Download original image if available
+    if (uploadedImage) {
+      const link = document.createElement('a');
+      link.href = uploadedImage;
+      link.download = `original-product-photo.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     photos.forEach((photoData, index) => {
       const link = document.createElement('a');
-      link.href = uploadedImage || getGenericPlaceholderUrl();
+      link.href = uploadedImage || getGenericPlaceholderUrl(); // Use uploadedImage as a placeholder for generated images
       link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
       document.body.appendChild(link);
       link.click();
@@ -53,6 +63,33 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {uploadedImage && (
+            <PhotoDetailDialog
+              styleId="original" // A unique ID for the original image
+              styleName="Original Upload"
+              index={0}
+              uploadedImage={uploadedImage}
+            >
+              <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
+                <div className="w-full h-48 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 p-2">
+                  <img
+                    src={uploadedImage}
+                    alt="Original Uploaded Product"
+                    className="max-h-full max-w-full object-contain rounded-lg"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Button variant="secondary" size="sm" className="flex items-center">
+                    <Expand className="mr-2 h-4 w-4" /> View Original
+                  </Button>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-white text-center">
+                  <p className="font-semibold">Original Upload</p>
+                </div>
+              </div>
+            </PhotoDetailDialog>
+          )}
+
           {photos.map((photoData, index) => (
             <PhotoDetailDialog
               key={photoData.uniqueId}
