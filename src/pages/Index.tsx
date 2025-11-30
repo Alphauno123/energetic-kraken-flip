@@ -10,21 +10,31 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import React, { useRef, useState, useEffect } from "react";
 import { usePhotoGeneration } from "@/hooks/usePhotoGeneration";
+import { useImageUpload } from "@/hooks/useImageUpload"; // Import the new hook
 
 const Index = () => {
-  const imageUploadRef = useRef<HTMLDivElement>(null);
   const styleSelectorRef = useRef<HTMLDivElement>(null);
   const generatedPhotosRef = useRef<HTMLDivElement>(null);
 
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const {
+    uploadedImage,
+    imageUploadRef,
+    handleImageUpload: handleImageUploadHook,
+    scrollToImageUpload,
+    resetImageUpload,
+  } = useImageUpload((image) => {
+    if (image && styleSelectorRef.current) {
+      styleSelectorRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  });
 
   const {
     isGenerating,
     generationProgress,
     generatedPhotos,
     selectedStylesWithCounts,
-    handleStyleSelection,
     resetGeneration,
+    handleStyleSelection,
   } = usePhotoGeneration();
 
   // Effect to scroll to generated photos when they appear
@@ -34,20 +44,8 @@ const Index = () => {
     }
   }, [isGenerating, generatedPhotos]);
 
-  const scrollToImageUpload = () => {
-    imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleImageUpload = (image: string | null) => {
-    setUploadedImage(image);
-    resetGeneration(); // Reset generation state when a new image is uploaded
-    if (image && styleSelectorRef.current) {
-      styleSelectorRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const handleReset = () => {
-    setUploadedImage(null);
+    resetImageUpload(); // Reset image upload state
     resetGeneration(); // Reset generation state
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -61,7 +59,7 @@ const Index = () => {
       <HowItWorks />
       <main className="flex-grow container mx-auto px-4 py-12">
         <div ref={imageUploadRef}>
-          <ImageUpload onImageUpload={handleImageUpload} />
+          <ImageUpload onImageUpload={handleImageUploadHook} />
         </div>
         {uploadedImage && (
           <div ref={styleSelectorRef}>
