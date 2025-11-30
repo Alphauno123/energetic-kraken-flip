@@ -32,7 +32,7 @@ const StylePreviewCard = ({ styleId, styleName, description, isSelected, onClick
     >
       <StylePlaceholderImage styleId={styleId} styleName={styleName} imageUrl={previewImageUrl} />
       <div className="p-4 flex-grow">
-        <h3 className="font-semibold text-lg mb-1">{styleName}</h3>
+        <h3 className="font-semibold text-lg mb-1 line-clamp-2">{styleName}</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
       </div>
       {isSelected && (
