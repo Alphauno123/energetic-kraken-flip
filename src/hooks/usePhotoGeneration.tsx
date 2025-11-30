@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SelectedStyleWithCount } from '@/components/StyleSelector';
 
 interface GeneratedPhoto {
@@ -13,7 +13,7 @@ interface UsePhotoGenerationResult {
   generationProgress: number;
   generatedPhotos: GeneratedPhoto[];
   selectedStylesWithCounts: SelectedStyleWithCount[];
-  handleStyleSelection: (stylesWithCounts: SelectedStyleWithCount[], generatedPhotosRef: React.RefObject<HTMLDivElement>) => void;
+  handleStyleSelection: (stylesWithCounts: SelectedStyleWithCount[]) => void;
   resetGeneration: () => void;
 }
 
@@ -24,7 +24,16 @@ export function usePhotoGeneration(): UsePhotoGenerationResult {
   const [generationProgress, setGenerationProgress] = useState<number>(0);
   const generationIntervalRef = useRef<number | null>(null);
 
-  const handleStyleSelection = (stylesWithCounts: SelectedStyleWithCount[], generatedPhotosRef: React.RefObject<HTMLDivElement>) => {
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (generationIntervalRef.current) {
+        clearInterval(generationIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const handleStyleSelection = (stylesWithCounts: SelectedStyleWithCount[]) => {
     // Clear any existing interval to prevent multiple simulations running
     if (generationIntervalRef.current) {
       clearInterval(generationIntervalRef.current);
@@ -49,15 +58,11 @@ export function usePhotoGeneration(): UsePhotoGenerationResult {
 
         stylesWithCounts.forEach(style => {
           for (let i = 0; i < style.count; i++) {
-            simulatedPhotosData.push({ styleId: style.id, uniqueId: `${style.id}-${i}-${Date.now()}` }); // Added Date.now() for more uniqueness
+            simulatedPhotosData.push({ styleId: style.id, uniqueId: `${style.id}-${i}-${Date.now()}` });
           }
         });
         setGeneratedPhotos(simulatedPhotosData);
         setIsGenerating(false);
-
-        if (generatedPhotosRef.current) {
-          generatedPhotosRef.current.scrollIntoView({ behavior: "smooth" });
-        }
       } else {
         setGenerationProgress(currentProgress);
       }

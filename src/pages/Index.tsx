@@ -8,8 +8,8 @@ import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import React, { useRef, useState } from "react";
-import { usePhotoGeneration } from "@/hooks/usePhotoGeneration"; // Import the new hook
+import React, { useRef, useState, useEffect } from "react";
+import { usePhotoGeneration } from "@/hooks/usePhotoGeneration";
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
@@ -26,6 +26,13 @@ const Index = () => {
     handleStyleSelection,
     resetGeneration,
   } = usePhotoGeneration();
+
+  // Effect to scroll to generated photos when they appear
+  useEffect(() => {
+    if (!isGenerating && generatedPhotos.length > 0 && generatedPhotosRef.current) {
+      generatedPhotosRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isGenerating, generatedPhotos]);
 
   const scrollToImageUpload = () => {
     imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -58,7 +65,7 @@ const Index = () => {
         </div>
         {uploadedImage && (
           <div ref={styleSelectorRef}>
-            <StyleSelector onSelectStyles={(styles) => handleStyleSelection(styles, generatedPhotosRef)} />
+            <StyleSelector onSelectStyles={handleStyleSelection} />
           </div>
         )}
 
