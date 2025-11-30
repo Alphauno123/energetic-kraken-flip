@@ -3,9 +3,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import StylePlaceholderImage from './StylePlaceholderImage'; // Import the new component
+import StylePreviewCard from './StylePreviewCard'; // Import the new component
 
 interface StyleOption {
   id: string;
@@ -49,27 +47,13 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: st
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {styles.map((style) => (
-            <div
+            <StylePreviewCard
               key={style.id}
-              className={cn(
-                "relative border-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-200",
-                selectedStyles.includes(style.id)
-                  ? "border-blue-500 ring-2 ring-blue-500 shadow-md bg-blue-50/20 dark:bg-blue-900/20"
-                  : "border-gray-200 hover:border-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
-              )}
+              styleName={style.name}
+              description={style.description}
+              isSelected={selectedStyles.includes(style.id)}
               onClick={() => toggleStyle(style.id)}
-            >
-              <StylePlaceholderImage styleName={style.name} /> {/* Use the new component here */}
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-1">{style.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{style.description}</p>
-              </div>
-              {selectedStyles.includes(style.id) && (
-                <div className="absolute top-2 right-2 text-blue-500">
-                  <CheckCircle2 className="h-6 w-6 fill-blue-500 text-white" />
-                </div>
-              )}
-            </div>
+            />
           ))}
         </div>
         <Button
