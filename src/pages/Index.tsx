@@ -5,10 +5,10 @@ import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
 import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
-import HowItWorks from "@/components/HowItWorks";
-import GenerationProgress from "@/components/GenerationProgress"; // Import the new component
+import HowItWorks from "@/components/HowItWorks"; // Import the new component
+import GenerationProgress from "@/components/GenerationProgress";
 import React, { useRef, useState } from "react";
-import { RotateCcw } from "lucide-react"; // Loader2 is now used inside GenerationProgress
+import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
@@ -20,7 +20,7 @@ const Index = () => {
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [generationProgress, setGenerationProgress] = useState<number>(0); // New state for progress
+  const [generationProgress, setGenerationProgress] = useState<number>(0);
 
   const scrollToImageUpload = () => {
     imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,10 +28,10 @@ const Index = () => {
 
   const handleImageUpload = (image: string | null) => {
     setUploadedImage(image);
-    setGeneratedPhotos([]); // Clear generated photos on new upload
-    setSelectedStyles([]); // Clear selected styles on new upload
-    setIsGenerating(false); // Reset loading state
-    setGenerationProgress(0); // Reset progress
+    setGeneratedPhotos([]);
+    setSelectedStyles([]);
+    setIsGenerating(false);
+    setGenerationProgress(0);
     if (image && styleSelectorRef.current) {
       styleSelectorRef.current?.scrollIntoView({ behavior: "smooth" });
     }
@@ -39,22 +39,21 @@ const Index = () => {
 
   const handleStyleSelection = (styles: string[]) => {
     setSelectedStyles(styles);
-    setIsGenerating(true); // Set loading state to true
-    setGenerationProgress(0); // Reset progress before starting
-    setGeneratedPhotos([]); // Clear previous generated photos
+    setIsGenerating(true);
+    setGenerationProgress(0);
+    setGeneratedPhotos([]);
 
     console.log("Selected styles for generation:", styles);
 
-    // Simulate AI generation with a delay and progress updates
     let currentProgress = 0;
     const interval = setInterval(() => {
-      currentProgress += 10; // Increment progress
+      currentProgress += 10;
       if (currentProgress >= 100) {
         clearInterval(interval);
         setGenerationProgress(100);
         const simulatedPhotos = styles.map((style, index) => `/placeholder.svg?style=${style}&idx=${index}`);
         setGeneratedPhotos(simulatedPhotos);
-        setIsGenerating(false); // Set loading state to false after simulation
+        setIsGenerating(false);
 
         if (generatedPhotosRef.current) {
           generatedPhotosRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -62,7 +61,7 @@ const Index = () => {
       } else {
         setGenerationProgress(currentProgress);
       }
-    }, 200); // Update progress every 200ms for a 2-second total
+    }, 200);
   };
 
   const handleDownloadAll = () => {
@@ -75,17 +74,16 @@ const Index = () => {
     setSelectedStyles([]);
     setGeneratedPhotos([]);
     setIsGenerating(false);
-    setGenerationProgress(0); // Reset progress on start over
-    // Scroll back to the top or hero section
+    setGenerationProgress(0);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <HeroSection onUploadClick={scrollToImageUpload} />
-      <HowItWorks />
+      <HowItWorks /> {/* Added the HowItWorks component here */}
       <main className="flex-grow container mx-auto px-4 py-12">
-        {uploadedImage && ( // Show reset button once an image is uploaded
+        {uploadedImage && (
           <div className="flex justify-end mb-8">
             <Button variant="outline" onClick={handleReset} className="flex items-center gap-2">
               <RotateCcw className="h-4 w-4" /> Start Over
@@ -102,7 +100,7 @@ const Index = () => {
         )}
 
         {isGenerating && (
-          <GenerationProgress progress={generationProgress} /> // Use the new progress component
+          <GenerationProgress progress={generationProgress} />
         )}
 
         {!isGenerating && generatedPhotos.length > 0 && (
