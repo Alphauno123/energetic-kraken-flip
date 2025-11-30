@@ -9,7 +9,7 @@ import { toast } from 'sonner'; // Import toast for user feedback
 
 interface GeneratedPhotosDisplayProps {
   photos: string[];
-  onDownloadAll: () => void; // This prop will now be handled internally for actual download
+  // Removed onDownloadAll: () => void; // This prop will now be handled internally for actual download
 }
 
 const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
