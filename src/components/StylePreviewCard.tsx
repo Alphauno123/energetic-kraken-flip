@@ -4,7 +4,7 @@ import React from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import StylePlaceholderImage from './StylePlaceholderImage';
-import { Input } from "@/components/ui/input"; // Import Input component
+import ImageCountSelector from './ImageCountSelector'; // Import the new component
 
 interface StylePreviewCardProps {
   styleId: string; // New prop to pass to StylePlaceholderImage
@@ -17,15 +17,6 @@ interface StylePreviewCardProps {
 }
 
 const StylePreviewCard = ({ styleId, styleName, description, isSelected, onClick, count, onCountChange }: StylePreviewCardProps) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value >= 1 && value <= 5) { // Limit to 1-5 images for now
-      onCountChange(value);
-    } else if (e.target.value === '') {
-      onCountChange(1); // Default to 1 if input is cleared
-    }
-  };
-
   return (
     <div
       className={cn(
@@ -46,18 +37,12 @@ const StylePreviewCard = ({ styleId, styleName, description, isSelected, onClick
           <div className="absolute top-2 right-2 text-blue-500">
             <CheckCircle2 className="h-6 w-6 fill-blue-500 text-white" />
           </div>
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <label htmlFor={`count-${styleName}`} className="sr-only">Number of images for {styleName}</label>
-            <Input
-              id={`count-${styleName}`}
-              type="number"
-              min="1"
-              max="5"
-              value={count}
-              onChange={handleInputChange}
-              onClick={(e) => e.stopPropagation()} // Prevent card click when changing count
-              className="w-full text-center"
-              aria-label={`Number of images for ${styleName}`}
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+            <ImageCountSelector
+              count={count}
+              onCountChange={onCountChange}
+              min={1}
+              max={5} // Keeping the limit of 1-5 images
             />
           </div>
         </>
