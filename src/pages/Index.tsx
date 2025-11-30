@@ -8,6 +8,7 @@ import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer"; // Import the new Footer component
 import React, { useRef, useState } from "react";
 
 const Index = () => {
@@ -109,6 +110,7 @@ const Index = () => {
           </div>
         )}
       </main>
+      <Footer /> {/* Add the Footer component here */}
       <MadeWithDyad />
     </div>
   );
