@@ -83,11 +83,6 @@ const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
               </div>
             )}
           </div>
-          {image && (
-            <Button className="w-full mt-4 py-3 text-lg">
-              Generate Photos
-            </Button>
-          )}
         </div>
       </CardContent>
     </Card>
