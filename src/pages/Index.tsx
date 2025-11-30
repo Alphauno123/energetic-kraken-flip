@@ -3,14 +3,18 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
-import StyleSelector from "@/components/StyleSelector"; // Import the new component
+import StyleSelector from "@/components/StyleSelector";
+import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay"; // Import the new component
 import React, { useRef, useState } from "react";
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
   const styleSelectorRef = useRef<HTMLDivElement>(null);
+  const generatedPhotosRef = useRef<HTMLDivElement>(null); // Ref for generated photos section
+
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [generatedPhotos, setGeneratedPhotos] = useState<string[]>([]); // State for generated photos
 
   const scrollToImageUpload = () => {
     imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -18,8 +22,8 @@ const Index = () => {
 
   const handleImageUpload = (image: string | null) => {
     setUploadedImage(image);
+    setGeneratedPhotos([]); // Clear generated photos on new upload
     if (image && styleSelectorRef.current) {
-      // Scroll to style selector after image upload
       styleSelectorRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
@@ -27,7 +31,19 @@ const Index = () => {
   const handleStyleSelection = (styles: string[]) => {
     setSelectedStyles(styles);
     console.log("Selected styles for generation:", styles);
-    // Here you would typically trigger the AI generation process
+    // Simulate AI generation with placeholder images
+    const simulatedPhotos = styles.map((style, index) => `/placeholder.svg?style=${style}&idx=${index}`);
+    setGeneratedPhotos(simulatedPhotos);
+
+    if (generatedPhotosRef.current) {
+      generatedPhotosRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleDownloadAll = () => {
+    // In a real app, you'd trigger a bulk download or zip file creation
+    alert("Downloading all generated photos! (Simulated)");
+    console.log("Initiating download for all photos:", generatedPhotos);
   };
 
   return (
@@ -37,9 +53,14 @@ const Index = () => {
         <div ref={imageUploadRef}>
           <ImageUpload onImageUpload={handleImageUpload} />
         </div>
-        {uploadedImage && ( // Only show style selector if an image is uploaded
+        {uploadedImage && (
           <div ref={styleSelectorRef}>
             <StyleSelector onSelectStyles={handleStyleSelection} />
+          </div>
+        )}
+        {generatedPhotos.length > 0 && ( // Only show generated photos if available
+          <div ref={generatedPhotosRef}>
+            <GeneratedPhotosDisplay photos={generatedPhotos} onDownloadAll={handleDownloadAll} />
           </div>
         )}
       </main>
