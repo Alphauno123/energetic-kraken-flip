@@ -1,54 +1,82 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Expand, Image as ImageIcon } from 'lucide-react'; // Import Image icon for the original photo
+import { Download, Expand, CheckSquare, Square } from 'lucide-react'; // Import CheckSquare and Square for select all/none
 import { toast } from 'sonner';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import PhotoDetailDialog from './PhotoDetailDialog';
-import { getStyleNameById, predefinedStyles } from '@/utils/styles'; // Import predefinedStyles
+import { getStyleNameById, predefinedStyles } from '@/utils/styles';
 import { getGenericPlaceholderUrl } from '@/utils/imageUtils';
 
 interface GeneratedPhotosDisplayProps {
-  photos: Array<{ styleId: string; uniqueId: string; prompt?: string }>; // Include prompt for custom styles
+  photos: Array<{ styleId: string; uniqueId: string; prompt?: string }>;
   uploadedImage: string | null;
 }
 
 const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDisplayProps) => {
+  const [selectedPhotoUniqueIds, setSelectedPhotoUniqueIds] = useState<Set<string>>(new Set());
+
   if (photos.length === 0 && !uploadedImage) {
     return null;
   }
 
-  const handleDownloadAll = () => {
-    if (photos.length === 0 && !uploadedImage) {
+  const allDisplayablePhotos = uploadedImage
+    ? [{ styleId: "original", uniqueId: "original-upload", prompt: "Original Upload" }, ...photos]
+    : photos;
+
+  const handleToggleSelect = (uniqueId: string) => {
+    setSelectedPhotoUniqueIds((prevSelected) => {
+      const newSet = new Set(prevSelected);
+      if (newSet.has(uniqueId)) {
+        newSet.delete(uniqueId);
+      } else {
+        newSet.add(uniqueId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = () => {
+    const allIds = new Set(allDisplayablePhotos.map((p) => p.uniqueId));
+    setSelectedPhotoUniqueIds(allIds);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedPhotoUniqueIds(new Set());
+  };
+
+  const isAllSelected = selectedPhotoUniqueIds.size === allDisplayablePhotos.length;
+  const isAnySelected = selectedPhotoUniqueIds.size > 0;
+
+  const handleDownloadSelected = () => {
+    const photosToDownload = isAnySelected
+      ? allDisplayablePhotos.filter((p) => selectedPhotoUniqueIds.has(p.uniqueId))
+      : allDisplayablePhotos; // If nothing selected, download all
+
+    if (photosToDownload.length === 0) {
       toast.info("No photos to download.");
       return;
     }
 
     toast.loading("Preparing your photos for download...", { id: "download-toast" });
 
-    // Download original image if available
-    if (uploadedImage) {
+    photosToDownload.forEach((photoData, index) => {
       const link = document.createElement('a');
-      link.href = uploadedImage;
-      link.download = `original-product-photo.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    // Download each generated photo (using generic placeholder for simulation)
-    photos.forEach((photoData, index) => {
-      const link = document.createElement('a');
-      link.href = getGenericPlaceholderUrl(); // Use generic placeholder for generated images
-      link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
+      if (photoData.styleId === "original" && uploadedImage) {
+        link.href = uploadedImage;
+        link.download = `original-product-photo.png`;
+      } else {
+        link.href = getGenericPlaceholderUrl(); // Use generic placeholder for generated images
+        link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
+      }
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     });
 
-    toast.success("All photos are downloading!", { id: "download-toast" });
+    toast.success(`${photosToDownload.length} photo(s) are downloading!`, { id: "download-toast" });
   };
 
   // Helper to get the display name for a style, considering custom prompts
@@ -70,50 +98,46 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
         <CardDescription className="text-gray-600">
           Here are the stunning photos generated based on your product and selected styles.
         </CardDescription>
-        <Button onClick={handleDownloadAll} className="mt-4 py-3 text-lg">
-          <Download className="mr-2 h-5 w-5" /> Download All Photos
-        </Button>
+        <div className="flex flex-col sm:flex-row justify-center gap-3 mt-4">
+          <Button onClick={handleDownloadSelected} className="py-3 text-lg" disabled={photos.length === 0 && !uploadedImage}>
+            <Download className="mr-2 h-5 w-5" /> {isAnySelected ? `Download ${selectedPhotoUniqueIds.size} Selected` : "Download All Photos"}
+          </Button>
+          {allDisplayablePhotos.length > 0 && (
+            <Button
+              variant="outline"
+              onClick={isAllSelected ? handleDeselectAll : handleSelectAll}
+              className="py-3 text-lg"
+            >
+              {isAllSelected ? (
+                <Square className="mr-2 h-5 w-5" />
+              ) : (
+                <CheckSquare className="mr-2 h-5 w-5" />
+              )}
+              {isAllSelected ? "Deselect All" : "Select All"}
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {uploadedImage && (
-            <PhotoDetailDialog
-              styleId="original"
-              styleName="Original Upload"
-              index={0}
-              uploadedImage={uploadedImage}
-            >
-              <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
-                <GeneratedPhotoPlaceholder
-                  styleId="original"
-                  styleName="Original Upload"
-                  index={0}
-                  uploadedImage={uploadedImage}
-                  className="w-full h-48"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Button variant="secondary" size="sm" className="flex items-center">
-                    <Expand className="mr-2 h-4 w-4" /> View Original
-                  </Button>
-                </div>
-              </div>
-            </PhotoDetailDialog>
-          )}
-
-          {photos.map((photoData, index) => (
+          {allDisplayablePhotos.map((photoData, index) => (
             <PhotoDetailDialog
               key={photoData.uniqueId}
               styleId={photoData.styleId}
-              styleName={getDisplayName(photoData)} // Use helper for display name
+              styleName={getDisplayName(photoData)}
               index={index}
-              uploadedImage={uploadedImage}
+              uploadedImage={photoData.styleId === "original" ? uploadedImage : uploadedImage} // Pass uploadedImage for generated too
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
                   styleId={photoData.styleId}
-                  styleName={getDisplayName(photoData)} // Use helper for display name
+                  styleName={getDisplayName(photoData)}
                   index={index}
-                  uploadedImage={uploadedImage}
+                  uploadedImage={photoData.styleId === "original" ? uploadedImage : uploadedImage}
+                  className="w-full h-48"
+                  uniqueId={photoData.uniqueId}
+                  isSelected={selectedPhotoUniqueIds.has(photoData.uniqueId)}
+                  onToggleSelect={handleToggleSelect}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
