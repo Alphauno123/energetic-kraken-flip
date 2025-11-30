@@ -1,14 +1,13 @@
 "use client";
 
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
-import StyleSelector, { SelectedStyleWithCount } from "@/components/StyleSelector"; // Import SelectedStyleWithCount
+import StyleSelector, { SelectedStyleWithCount } from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer"; // Import the new Footer component
+import Footer from "@/components/Footer";
 import React, { useRef, useState } from "react";
 
 const Index = () => {
@@ -17,8 +16,8 @@ const Index = () => {
   const generatedPhotosRef = useRef<HTMLDivElement>(null);
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [selectedStylesWithCounts, setSelectedStylesWithCounts] = useState<SelectedStyleWithCount[]>([]); // Updated state type
-  const [generatedPhotos, setGeneratedPhotos] = useState<Array<{ styleId: string; uniqueId: string }>>([]); // Updated state type to store objects
+  const [selectedStylesWithCounts, setSelectedStylesWithCounts] = useState<SelectedStyleWithCount[]>([]);
+  const [generatedPhotos, setGeneratedPhotos] = useState<Array<{ styleId: string; uniqueId: string }>>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generationProgress, setGenerationProgress] = useState<number>(0);
 
@@ -46,7 +45,7 @@ const Index = () => {
     console.log("Selected styles for generation:", stylesWithCounts);
 
     const totalImagesToGenerate = stylesWithCounts.reduce((sum, style) => sum + style.count, 0);
-    const simulatedPhotosData: Array<{ styleId: string; uniqueId: string }> = []; // Array to store photo data
+    const simulatedPhotosData: Array<{ styleId: string; uniqueId: string }> = [];
 
     let currentProgress = 0;
     const interval = setInterval(() => {
@@ -55,14 +54,12 @@ const Index = () => {
         clearInterval(interval);
         setGenerationProgress(100);
 
-        // Simulate generating all photos based on counts
         stylesWithCounts.forEach(style => {
           for (let i = 0; i < style.count; i++) {
-            // Store an object with styleId and a unique identifier
             simulatedPhotosData.push({ styleId: style.id, uniqueId: `${style.id}-${i}` });
           }
         });
-        setGeneratedPhotos(simulatedPhotosData); // Update state with objects
+        setGeneratedPhotos(simulatedPhotosData);
         setIsGenerating(false);
 
         if (generatedPhotosRef.current) {
@@ -111,7 +108,6 @@ const Index = () => {
         )}
       </main>
       <Footer />
-      <MadeWithDyad />
     </div>
   );
 };
