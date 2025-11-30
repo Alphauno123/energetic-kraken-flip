@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UploadCloud, X, FileText } from 'lucide-react'; // Import FileText icon
+import { UploadCloud, X } from 'lucide-react'; // Removed FileText import
 
 interface ImageUploadProps {
   onImageUpload: (image: string | null) => void;
@@ -67,8 +67,8 @@ const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
               >
                 <UploadCloud className="w-12 h-12 text-gray-400 mb-2" />
                 <p className="text-gray-500 text-lg font-medium">Drag & drop or click to upload</p>
-                <p className="text-sm text-gray-400 flex items-center gap-1">
-                  <FileText className="h-4 w-4" /> PNG, JPG, GIF up to 10MB
+                <p className="text-sm text-gray-400">
+                  PNG, JPG, GIF up to 10MB
                 </p>
               </div>
             ) : (
