@@ -17,7 +17,7 @@ const Index = () => {
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedStylesWithCounts, setSelectedStylesWithCounts] = useState<SelectedStyleWithCount[]>([]); // Updated state type
-  const [generatedPhotos, setGeneratedPhotos] = useState<string[]>([]);
+  const [generatedPhotos, setGeneratedPhotos] = useState<Array<{ styleId: string; uniqueId: string }>>([]); // Updated state type to store objects
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generationProgress, setGenerationProgress] = useState<number>(0);
 
@@ -45,8 +45,7 @@ const Index = () => {
     console.log("Selected styles for generation:", stylesWithCounts);
 
     const totalImagesToGenerate = stylesWithCounts.reduce((sum, style) => sum + style.count, 0);
-    let currentGeneratedCount = 0;
-    const simulatedPhotos: string[] = [];
+    const simulatedPhotosData: Array<{ styleId: string; uniqueId: string }> = []; // Array to store photo data
 
     let currentProgress = 0;
     const interval = setInterval(() => {
@@ -58,10 +57,11 @@ const Index = () => {
         // Simulate generating all photos based on counts
         stylesWithCounts.forEach(style => {
           for (let i = 0; i < style.count; i++) {
-            simulatedPhotos.push(`/placeholder.svg?style=${style.id}&idx=${i}`);
+            // Store an object with styleId and a unique identifier
+            simulatedPhotosData.push({ styleId: style.id, uniqueId: `${style.id}-${i}` });
           }
         });
-        setGeneratedPhotos(simulatedPhotos);
+        setGeneratedPhotos(simulatedPhotosData); // Update state with objects
         setIsGenerating(false);
 
         if (generatedPhotosRef.current) {
