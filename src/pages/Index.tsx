@@ -65,11 +65,7 @@ const Index = () => {
     }, 200);
   };
 
-  const handleDownloadAll = () => {
-    alert("Downloading all generated photos! (Simulated)");
-    console.log("Initiating download for all photos:", generatedPhotos);
-  };
-
+  // Removed handleDownloadAll as it's now handled internally by GeneratedPhotosDisplay
   const handleReset = () => {
     setUploadedImage(null);
     setSelectedStyles([]);
@@ -101,7 +97,7 @@ const Index = () => {
 
         {!isGenerating && generatedPhotos.length > 0 && (
           <div ref={generatedPhotosRef}>
-            <GeneratedPhotosDisplay photos={generatedPhotos} onDownloadAll={handleDownloadAll} />
+            <GeneratedPhotosDisplay photos={generatedPhotos} /> {/* Removed onDownloadAll prop */}
           </div>
         )}
       </main>
