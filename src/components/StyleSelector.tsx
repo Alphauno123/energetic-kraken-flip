@@ -4,14 +4,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import StylePreviewCard from './StylePreviewCard';
-import CustomStyleInput from './CustomStyleInput'; // Import the new component
-import { predefinedStyles, SelectedStyleWithCount, StyleOption, getStyleNameById } from '@/utils/styles'; // Import predefinedStyles and getStyleNameById
+import CustomStyleInput from './CustomStyleInput';
+import CustomStyleCard from './CustomStyleCard'; // Import the new CustomStyleCard
+import { predefinedStyles, SelectedStyleWithCount, StyleOption } from '@/utils/styles'; // Import predefinedStyles and getStyleNameById
 
 const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: SelectedStyleWithCount[]) => void }) => {
   const [customStyles, setCustomStyles] = useState<StyleOption[]>([]);
   const [selectedStylesMap, setSelectedStylesMap] = useState<Record<string, number>>({});
-
-  const allAvailableStyles = [...predefinedStyles, ...customStyles];
 
   const handleAddCustomStyle = (prompt: string) => {
     const newCustomStyle: StyleOption = {
@@ -49,6 +48,7 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
   };
 
   const handleGenerateClick = () => {
+    const allAvailableStyles = [...predefinedStyles, ...customStyles];
     const stylesToGenerate: SelectedStyleWithCount[] = Object.entries(selectedStylesMap).map(([id, count]) => {
       const styleOption = allAvailableStyles.find(s => s.id === id);
       return {
@@ -78,13 +78,34 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
         <div className="mb-8">
           <CustomStyleInput onAddCustomStyle={handleAddCustomStyle} />
         </div>
+
+        {customStyles.length > 0 && (
+          <>
+            <h3 className="text-2xl font-bold mb-6 text-center">Your Custom Styles</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {customStyles.map((style) => (
+                <CustomStyleCard
+                  key={style.id}
+                  styleId={style.id}
+                  styleName={style.prompt || style.name}
+                  description={style.description}
+                  isSelected={!!selectedStylesMap[style.id]}
+                  onClick={() => toggleStyle(style.id)}
+                  count={selectedStylesMap[style.id] || 1}
+                  onCountChange={(newCount) => handleCountChange(style.id, newCount)}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         <h3 className="text-2xl font-bold mb-6 text-center">Predefined Styles</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allAvailableStyles.map((style) => (
+          {predefinedStyles.map((style) => (
             <StylePreviewCard
               key={style.id}
-              styleId={style.isCustom ? 'custom' : style.id} // Use 'custom' for icon/background lookup
-              styleName={style.isCustom ? style.prompt || style.name : style.name} // Display prompt for custom
+              styleId={style.id}
+              styleName={style.name}
               description={style.description}
               isSelected={!!selectedStylesMap[style.id]}
               onClick={() => toggleStyle(style.id)}
