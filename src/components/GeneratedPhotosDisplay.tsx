@@ -3,13 +3,12 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download } from 'lucide-react';
+import { Download, Share2 } from 'lucide-react'; // Import Share2 icon
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner'; // Import toast for user feedback
 
 interface GeneratedPhotosDisplayProps {
   photos: string[];
-  // Removed onDownloadAll: () => void; // This prop will now be handled internally for actual download
 }
 
 const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
@@ -37,6 +36,16 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
     toast.success("All photos are downloading!", { id: "download-toast" });
   };
 
+  const handleSharePhoto = async (photoUrl: string) => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin + photoUrl); // Use window.location.origin for full URL
+      toast.success("Image link copied to clipboard!");
+    } catch (err) {
+      console.error("Failed to copy image link: ", err);
+      toast.error("Failed to copy link. Please try again.");
+    }
+  };
+
   return (
     <Card className="w-full max-w-6xl mx-auto mt-10 p-6 shadow-lg">
       <CardHeader className="text-center">
@@ -57,11 +66,14 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
                 alt={`Generated Product Photo ${index + 1}`}
                 className="w-full h-48 object-cover bg-gray-100"
               />
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Button variant="secondary" size="sm" asChild>
                   <a href={photoUrl} download={`product-photo-${index + 1}.png`} className="flex items-center">
                     <Download className="mr-2 h-4 w-4" /> Download
                   </a>
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => handleSharePhoto(photoUrl)} className="flex items-center">
+                  <Share2 className="mr-2 h-4 w-4" /> Share
                 </Button>
               </div>
             </div>
