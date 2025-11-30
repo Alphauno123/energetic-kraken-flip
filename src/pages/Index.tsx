@@ -6,8 +6,9 @@ import ImageUpload from "@/components/ImageUpload";
 import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import HowItWorks from "@/components/HowItWorks";
+import GenerationProgress from "@/components/GenerationProgress"; // Import the new component
 import React, { useRef, useState } from "react";
-import { Loader2, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react"; // Loader2 is now used inside GenerationProgress
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
@@ -19,6 +20,7 @@ const Index = () => {
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [generationProgress, setGenerationProgress] = useState<number>(0); // New state for progress
 
   const scrollToImageUpload = () => {
     imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -29,6 +31,7 @@ const Index = () => {
     setGeneratedPhotos([]); // Clear generated photos on new upload
     setSelectedStyles([]); // Clear selected styles on new upload
     setIsGenerating(false); // Reset loading state
+    setGenerationProgress(0); // Reset progress
     if (image && styleSelectorRef.current) {
       styleSelectorRef.current?.scrollIntoView({ behavior: "smooth" });
     }
@@ -37,20 +40,29 @@ const Index = () => {
   const handleStyleSelection = (styles: string[]) => {
     setSelectedStyles(styles);
     setIsGenerating(true); // Set loading state to true
+    setGenerationProgress(0); // Reset progress before starting
     setGeneratedPhotos([]); // Clear previous generated photos
 
     console.log("Selected styles for generation:", styles);
 
-    // Simulate AI generation with a delay
-    setTimeout(() => {
-      const simulatedPhotos = styles.map((style, index) => `/placeholder.svg?style=${style}&idx=${index}`);
-      setGeneratedPhotos(simulatedPhotos);
-      setIsGenerating(false); // Set loading state to false after simulation
+    // Simulate AI generation with a delay and progress updates
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += 10; // Increment progress
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        setGenerationProgress(100);
+        const simulatedPhotos = styles.map((style, index) => `/placeholder.svg?style=${style}&idx=${index}`);
+        setGeneratedPhotos(simulatedPhotos);
+        setIsGenerating(false); // Set loading state to false after simulation
 
-      if (generatedPhotosRef.current) {
-        generatedPhotosRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (generatedPhotosRef.current) {
+          generatedPhotosRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        setGenerationProgress(currentProgress);
       }
-    }, 2000); // Simulate a 2-second generation time
+    }, 200); // Update progress every 200ms for a 2-second total
   };
 
   const handleDownloadAll = () => {
@@ -63,6 +75,7 @@ const Index = () => {
     setSelectedStyles([]);
     setGeneratedPhotos([]);
     setIsGenerating(false);
+    setGenerationProgress(0); // Reset progress on start over
     // Scroll back to the top or hero section
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -89,11 +102,7 @@ const Index = () => {
         )}
 
         {isGenerating && (
-          <div className="flex flex-col items-center justify-center mt-10 p-6 text-center text-gray-600 dark:text-gray-400">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-500 mb-4" />
-            <p className="text-xl font-medium">Generating your stunning product photos...</p>
-            <p className="text-md">This might take a few moments.</p>
-          </div>
+          <GenerationProgress progress={generationProgress} /> // Use the new progress component
         )}
 
         {!isGenerating && generatedPhotos.length > 0 && (
