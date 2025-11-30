@@ -13,22 +13,33 @@ import {
   Type, // New icon for custom styles
 } from 'lucide-react';
 
-export interface StyleOption {
+// Define specific interfaces for predefined and custom styles
+export interface PredefinedStyleOption {
   id: string;
   name: string;
   description: string;
-  isCustom?: boolean; // New field to identify custom styles
-  prompt?: string; // New field to store the custom prompt
+  isCustom?: false; // Explicitly false or absent for predefined
 }
+
+export interface CustomStyleOption {
+  id: string;
+  name: string; // This will be the prompt for display
+  description: string; // Generic description for custom styles
+  isCustom: true; // Explicitly true for custom
+  prompt: string; // Mandatory prompt for custom styles
+}
+
+// Union type for all style options
+export type StyleOption = PredefinedStyleOption | CustomStyleOption;
 
 // Define a type for the selected styles with their counts
 export interface SelectedStyleWithCount {
   id: string;
   count: number;
-  prompt?: string; // Include prompt for custom styles
+  prompt?: string; // Include prompt for custom styles, optional as not all selected styles are custom
 }
 
-export const predefinedStyles: StyleOption[] = [
+export const predefinedStyles: PredefinedStyleOption[] = [
   { id: 'studio', name: 'Studio Shot', description: 'Clean, professional studio background.' },
   { id: 'lifestyle', name: 'Lifestyle Scene', description: 'Product in a realistic, engaging environment.' },
   { id: 'seasonal', name: 'Seasonal Theme', description: 'Holiday or seasonal specific backgrounds.' },

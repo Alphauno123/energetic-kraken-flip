@@ -3,16 +3,16 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import StyleCard from './StyleCard'; // Import the new generic StyleCard
+import StyleCard from './StyleCard';
 import CustomStyleInput from './CustomStyleInput';
-import { predefinedStyles, SelectedStyleWithCount, StyleOption } from '@/utils/styles';
+import { predefinedStyles, SelectedStyleWithCount, StyleOption, CustomStyleOption } from '@/utils/styles';
 
 const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: SelectedStyleWithCount[]) => void }) => {
-  const [customStyles, setCustomStyles] = useState<StyleOption[]>([]);
+  const [customStyles, setCustomStyles] = useState<CustomStyleOption[]>([]);
   const [selectedStylesMap, setSelectedStylesMap] = useState<Record<string, number>>({});
 
   const handleAddCustomStyle = (prompt: string) => {
-    const newCustomStyle: StyleOption = {
+    const newCustomStyle: CustomStyleOption = {
       id: `custom-${Date.now()}`, // Unique ID for custom style
       name: prompt, // Use prompt as name for display in card
       description: 'User-defined AI style',
@@ -47,13 +47,14 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
   };
 
   const handleGenerateClick = () => {
-    const allAvailableStyles = [...predefinedStyles, ...customStyles];
+    const allAvailableStyles: StyleOption[] = [...predefinedStyles, ...customStyles];
     const stylesToGenerate: SelectedStyleWithCount[] = Object.entries(selectedStylesMap).map(([id, count]) => {
       const styleOption = allAvailableStyles.find(s => s.id === id);
       return {
         id,
         count,
-        ...(styleOption?.isCustom && { prompt: styleOption.prompt }), // Include prompt for custom styles
+        // Conditionally add prompt if it's a custom style
+        ...(styleOption && 'prompt' in styleOption && { prompt: styleOption.prompt }),
       };
     });
     onSelectStyles(stylesToGenerate);
