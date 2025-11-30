@@ -8,7 +8,7 @@ import {
   Sparkles,
   User,
   Megaphone,
-  Square,
+  Square, // Square is used here, but also mapped in styleIcons. Let's keep it here for the type definition of LucideIcon.
   LucideIcon
 } from 'lucide-react';
 
