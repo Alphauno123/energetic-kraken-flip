@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { SelectedStyleWithCount } from '@/components/StyleSelector';
+import { SelectedStyleWithCount } from '@/utils/styles'; // Import SelectedStyleWithCount from src/utils/styles
 
 interface GeneratedPhoto {
   styleId: string;

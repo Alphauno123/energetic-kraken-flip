@@ -18,6 +18,12 @@ export interface StyleOption {
   description: string;
 }
 
+// Define a type for the selected styles with their counts
+export interface SelectedStyleWithCount {
+  id: string;
+  count: number;
+}
+
 export const styles: StyleOption[] = [
   { id: 'studio', name: 'Studio Shot', description: 'Clean, professional studio background.' },
   { id: 'lifestyle', name: 'Lifestyle Scene', description: 'Product in a realistic, engaging environment.' },

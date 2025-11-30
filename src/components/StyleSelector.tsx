@@ -4,13 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import StylePreviewCard from './StylePreviewCard'; // Import the new component
-import { styles, StyleOption } from '@/utils/styles'; // Import styles from the new utility file
-
-// Define a type for the selected styles with their counts
-export interface SelectedStyleWithCount {
-  id: string;
-  count: number;
-}
+import { styles, SelectedStyleWithCount } from '@/utils/styles'; // Import styles and SelectedStyleWithCount from the new utility file
 
 const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: SelectedStyleWithCount[]) => void }) => {
   // State to store selected styles and their counts
