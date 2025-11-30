@@ -3,10 +3,11 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Share2, Copy } from 'lucide-react'; // Import Copy icon
+import { Download, Share2, Copy, Expand } from 'lucide-react'; // Import Expand icon
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner'; // Import toast for user feedback
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder'; // Import the new component
+import PhotoDetailDialog from './PhotoDetailDialog'; // Import the new dialog component
 
 interface GeneratedPhotosDisplayProps {
   photos: Array<{ styleId: string; uniqueId: string }>; // Updated prop type
@@ -40,7 +41,7 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
     toast.success("All photos are downloading!", { id: "download-toast" });
   };
 
-  const handleSharePhoto = async (photoData: { styleId: string; uniqueId: string }) => {
+  const handleSharePhoto = async (photoData: { styleId: string; uniqueId: string }, index: number) => {
     try {
       // Share a link to the generic placeholder, or a more specific one if a backend existed
       await navigator.clipboard.writeText(window.location.origin + getGenericPlaceholderUrl());
@@ -51,7 +52,7 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
     }
   };
 
-  const handleCopyImage = async (photoData: { styleId: string; uniqueId: string }) => {
+  const handleCopyImage = async (photoData: { styleId: string; uniqueId: string }, index: number) => {
     try {
       const response = await fetch(getGenericPlaceholderUrl()); // Fetch generic placeholder
       const blob = await response.blob();
@@ -82,20 +83,19 @@ const GeneratedPhotosDisplay = ({ photos }: GeneratedPhotosDisplayProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {photos.map((photoData, index) => (
             <div key={photoData.uniqueId} className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group">
-              {/* Use the new GeneratedPhotoPlaceholder component */}
               <GeneratedPhotoPlaceholder styleId={photoData.styleId} index={index} />
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <PhotoDetailDialog styleId={photoData.styleId} index={index}>
+                  <Button variant="secondary" size="sm" className="flex items-center">
+                    <Expand className="mr-2 h-4 w-4" /> View
+                  </Button>
+                </PhotoDetailDialog>
                 <Button variant="secondary" size="sm" asChild>
                   <a href={getGenericPlaceholderUrl()} download={`product-photo-${photoData.styleId}-${index + 1}.png`} className="flex items-center">
                     <Download className="mr-2 h-4 w-4" /> Download
                   </a>
                 </Button>
-                <Button variant="secondary" size="sm" onClick={() => handleSharePhoto(photoData)} className="flex items-center">
-                  <Share2 className="mr-2 h-4 w-4" /> Share Link
-                </Button>
-                <Button variant="secondary" size="sm" onClick={() => handleCopyImage(photoData)} className="flex items-center">
-                  <Copy className="mr-2 h-4 w-4" /> Copy Image
-                </Button>
+                {/* Removed individual Share and Copy buttons from hover overlay to simplify, as they are in the dialog */}
               </div>
             </div>
           ))}
