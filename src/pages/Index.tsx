@@ -5,9 +5,10 @@ import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
 import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
+import HowItWorks from "@/components/HowItWorks"; // Import the new component
 import React, { useRef, useState } from "react";
-import { Loader2, RotateCcw } from "lucide-react"; // Import Loader2 and RotateCcw icons
-import { Button } from "@/components/ui/button"; // Import Button component
+import { Loader2, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
@@ -69,6 +70,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <HeroSection onUploadClick={scrollToImageUpload} />
+      <HowItWorks /> {/* Add the HowItWorks component here */}
       <main className="flex-grow container mx-auto px-4 py-12">
         {uploadedImage && ( // Show reset button once an image is uploaded
           <div className="flex justify-end mb-8">
