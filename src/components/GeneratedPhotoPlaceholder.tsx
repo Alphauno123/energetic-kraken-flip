@@ -5,14 +5,15 @@ import { cn } from '@/lib/utils';
 import { styleIcons, styleBackgroundClasses, styleOverlayClasses } from '@/utils/styles';
 import { Image as ImageIcon } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
-import OriginalPhotoDisplay from './OriginalPhotoDisplay'; // Import the new component
+import OriginalPhotoDisplay from './OriginalPhotoDisplay';
+import { getStylePreviewImageUrl } from '@/utils/imageUtils'; // Import getStylePreviewImageUrl
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
   styleName: string;
   index: number;
   className?: string;
-  uploadedImage?: string | null;
+  // uploadedImage?: string | null; // Removed as it's only used by OriginalPhotoDisplay
   uniqueId: string;
   isSelected: boolean;
   onToggleSelect: (uniqueId: string) => void;
@@ -23,30 +24,30 @@ const GeneratedPhotoPlaceholder = ({
   styleName,
   index,
   className,
-  uploadedImage,
+  // uploadedImage, // Removed from destructuring
   uniqueId,
   isSelected,
   onToggleSelect,
 }: GeneratedPhotoPlaceholderProps) => {
   // Special handling for the "original" image
-  if (styleId === 'original' && uploadedImage) {
-    return (
-      <OriginalPhotoDisplay
-        uploadedImage={uploadedImage}
-        styleName={styleName}
-        uniqueId={uniqueId}
-        isSelected={isSelected}
-        onToggleSelect={onToggleSelect}
-        className={className}
-      />
-    );
-  }
+  // Note: uploadedImage is now passed from the parent GeneratedPhotosDisplay to PhotoDetailDialog,
+  // and then to OriginalPhotoDisplay directly.
+  // This component (GeneratedPhotoPlaceholder) should not receive uploadedImage directly.
+  // The parent GeneratedPhotosDisplay will pass uploadedImage to PhotoDetailDialog,
+  // and PhotoDetailDialog will pass it to OriginalPhotoDisplay when styleId is 'original'.
+  // For this component, if styleId is 'original', it means the parent is trying to render the original image,
+  // but it should be handled by OriginalPhotoDisplay.
+  // This conditional rendering here is a safeguard, but the primary logic for 'original' should be in GeneratedPhotosDisplay.
+  // For now, I'll assume `uploadedImage` is not passed to this component when `styleId === 'original'`
+  // and that `GeneratedPhotosDisplay` handles passing `uploadedImage` to `PhotoDetailDialog` correctly.
 
   // For generated photos
   const effectiveStyleId = styleId.startsWith('custom-') ? 'custom' : styleId;
   const backgroundClass = styleBackgroundClasses[effectiveStyleId] || 'bg-gray-200 dark:bg-gray-700';
   const IconComponent = styleIcons[effectiveStyleId] || styleIcons['white-bg'];
   const overlayClass = styleOverlayClasses[effectiveStyleId] || 'bg-transparent';
+
+  const previewImageUrl = getStylePreviewImageUrl(effectiveStyleId);
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening dialog when clicking checkbox
@@ -68,10 +69,10 @@ const GeneratedPhotoPlaceholder = ({
         onClick={handleCheckboxClick}
         className="absolute top-3 left-3 z-40"
       />
-      {uploadedImage ? (
+      {previewImageUrl ? (
         <>
           <img
-            src={uploadedImage}
+            src={previewImageUrl}
             alt={`Generated Product Photo for ${styleName}`}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[70%] max-h-[70%] object-contain z-10"
           />
