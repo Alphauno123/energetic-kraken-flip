@@ -2,13 +2,34 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { ImageIcon } from 'lucide-react'; // Import ImageIcon
+import {
+  Camera,
+  Home,
+  Leaf,
+  LayoutGrid,
+  Sparkles,
+  User,
+  Megaphone,
+  Square,
+  LucideIcon // Import LucideIcon type
+} from 'lucide-react';
 
 interface StylePlaceholderImageProps {
   styleId: string;
   styleName: string;
   className?: string;
 }
+
+const styleIcons: Record<string, LucideIcon> = {
+  'studio': Camera,
+  'lifestyle': Home,
+  'seasonal': Leaf,
+  'flatlay': LayoutGrid,
+  'tiktok': Sparkles,
+  'in-use': User,
+  'social-ad': Megaphone,
+  'white-bg': Square,
+};
 
 const StylePlaceholderImage = ({ styleId, styleName, className }: StylePlaceholderImageProps) => {
   const styleBackgroundClasses: Record<string, string> = {
@@ -23,6 +44,7 @@ const StylePlaceholderImage = ({ styleId, styleName, className }: StylePlacehold
   };
 
   const backgroundClass = styleBackgroundClasses[styleId] || 'bg-gray-200 dark:bg-gray-700';
+  const IconComponent = styleIcons[styleId] || Square; // Default to Square if no specific icon is found
 
   return (
     <div
@@ -32,7 +54,7 @@ const StylePlaceholderImage = ({ styleId, styleName, className }: StylePlacehold
         className
       )}
     >
-      <ImageIcon className="h-8 w-8 mb-2" /> {/* Added ImageIcon */}
+      <IconComponent className="h-8 w-8 mb-2" />
       {styleName}
     </div>
   );
