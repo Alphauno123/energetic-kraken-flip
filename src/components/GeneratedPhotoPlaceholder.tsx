@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { styleIcons, styleBackgroundClasses, getStyleNameById } from '@/utils/styles'; // Import from consolidated utility file
-import { Square } from 'lucide-react'; // Only import Square for default, as others are in styleIcons
+// Removed: import { Square } from 'lucide-react'; // Only import Square for default, as others are in styleIcons
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
@@ -15,7 +15,7 @@ interface GeneratedPhotoPlaceholderProps {
 
 const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploadedImage }: GeneratedPhotoPlaceholderProps) => {
   const backgroundClass = styleBackgroundClasses[styleId] || 'bg-gray-200 dark:bg-gray-700';
-  const IconComponent = styleIcons[styleId] || Square;
+  const IconComponent = styleIcons[styleId] || styleIcons['white-bg']; // Default to 'white-bg' icon
 
   return (
     <div
