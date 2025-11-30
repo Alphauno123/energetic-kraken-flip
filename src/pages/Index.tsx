@@ -5,8 +5,9 @@ import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
 import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
-import HowItWorks from "@/components/HowItWorks"; // Import the new component
+import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
+import { ModeToggle } from "@/components/ModeToggle"; // Import ModeToggle
 import React, { useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -81,15 +82,16 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <HeroSection onUploadClick={scrollToImageUpload} />
-      <HowItWorks /> {/* Added the HowItWorks component here */}
+      <HowItWorks />
       <main className="flex-grow container mx-auto px-4 py-12">
-        {uploadedImage && (
-          <div className="flex justify-end mb-8">
+        <div className="flex justify-end items-center gap-4 mb-8"> {/* Added flex container for buttons */}
+          {uploadedImage && (
             <Button variant="outline" onClick={handleReset} className="flex items-center gap-2">
               <RotateCcw className="h-4 w-4" /> Start Over
             </Button>
-          </div>
-        )}
+          )}
+          <ModeToggle /> {/* Added the ModeToggle component here */}
+        </div>
         <div ref={imageUploadRef}>
           <ImageUpload onImageUpload={handleImageUpload} />
         </div>
