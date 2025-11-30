@@ -21,7 +21,7 @@ const Header = ({ onReset, showResetButton }: HeaderProps) => {
         <div className="flex items-center gap-4">
           {showResetButton && (
             <Button variant="outline" onClick={onReset} className="flex items-center gap-2">
-              <RotateCcw className="h-4 w-4" /> Start Over
+              <RotateCcw className="mr-2 h-4 w-4" /> Start Over
             </Button>
           )}
           <ModeToggle />

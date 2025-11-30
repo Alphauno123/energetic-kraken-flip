@@ -110,7 +110,7 @@ const Index = () => {
           </div>
         )}
       </main>
-      <Footer /> {/* Add the Footer component here */}
+      <Footer />
       <MadeWithDyad />
     </div>
   );
