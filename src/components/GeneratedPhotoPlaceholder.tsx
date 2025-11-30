@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { styleIcons, styleBackgroundClasses, getStyleNameById } from '@/utils/styles'; // Import from consolidated utility file
+import { styleIcons, styleBackgroundClasses } from '@/utils/styles'; // Removed getStyleNameById
 // Removed: import { Square } from 'lucide-react'; // Only import Square for default, as others are in styleIcons
 
 interface GeneratedPhotoPlaceholderProps {
