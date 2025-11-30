@@ -1,9 +1,8 @@
 "use client";
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Added CardDescription
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { UploadCloud, Palette, Image, Download } from 'lucide-react';
-// Removed Accordion imports as they are no longer needed
 
 const steps = [
   {
@@ -37,7 +36,10 @@ const HowItWorks = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
           {steps.map((step, index) => (
-            <Card key={index} className="flex flex-col items-center p-6 text-center shadow-md hover:shadow-lg transition-shadow duration-200">
+            <Card
+              key={index}
+              className="flex flex-col items-center p-6 text-center shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
+            >
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-center mb-4">
                   {step.icon}
