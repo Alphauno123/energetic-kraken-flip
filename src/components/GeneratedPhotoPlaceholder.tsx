@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { styleIcons, styleBackgroundClasses } from '@/utils/styles'; // Removed getStyleNameById
-// Removed: import { Square } from 'lucide-react'; // Only import Square for default, as others are in styleIcons
+import { styleIcons, styleBackgroundClasses } from '@/utils/styles';
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
@@ -38,14 +37,14 @@ const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploa
               alt="Uploaded Product"
               className="h-24 w-24 object-contain mb-2 bg-white/80 dark:bg-gray-900/80 rounded-lg p-1 shadow-lg"
             />
-            <p className="text-lg font-bold text-white text-shadow-sm">{styleName}</p> {/* Use styleName */}
+            <p className="text-lg font-bold text-white text-shadow-sm">{styleName}</p>
             <p className="text-xs mt-1 text-gray-100 text-shadow-sm">Photo {index + 1}</p>
           </div>
         </>
       ) : (
         <>
           <IconComponent className="h-12 w-12 mb-2" />
-          <p className="text-lg font-bold">{styleName}</p> {/* Use styleName */}
+          <p className="text-lg font-bold">{styleName}</p>
           <p className="text-xs mt-1">Photo {index + 1}</p>
         </>
       )}
