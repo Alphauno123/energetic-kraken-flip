@@ -28,17 +28,12 @@ const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploa
         <>
           <img
             src={uploadedImage}
-            alt="Uploaded Product"
-            className="absolute inset-0 w-full h-full object-contain opacity-20"
+            alt={`Generated Product Photo for ${styleName}`}
+            className="absolute inset-0 w-full h-full object-contain"
           />
-          <div className="relative z-10 flex flex-col items-center justify-center p-2">
-            <img
-              src={uploadedImage}
-              alt="Uploaded Product"
-              className="h-24 w-24 object-contain mb-2 bg-white/80 dark:bg-gray-900/80 rounded-lg p-1 shadow-lg"
-            />
-            <p className="text-lg font-bold text-white text-shadow-sm">{styleName}</p>
-            <p className="text-xs mt-1 text-gray-100 text-shadow-sm">Photo {index + 1}</p>
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white text-center z-10">
+            <p className="text-lg font-bold">{styleName}</p>
+            <p className="text-sm mt-1">Photo {index + 1}</p>
           </div>
         </>
       ) : (
