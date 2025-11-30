@@ -16,9 +16,10 @@ import {
 
 interface GeneratedPhotoPlaceholderProps {
   styleId: string;
+  styleName: string; // New prop for the full style name
   index: number;
   className?: string;
-  uploadedImage?: string | null; // New prop for the uploaded image
+  uploadedImage?: string | null;
 }
 
 const styleIcons: Record<string, LucideIcon> = {
@@ -43,7 +44,7 @@ const styleBackgroundClasses: Record<string, string> = {
   'white-bg': 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900',
 };
 
-const GeneratedPhotoPlaceholder = ({ styleId, index, className, uploadedImage }: GeneratedPhotoPlaceholderProps) => {
+const GeneratedPhotoPlaceholder = ({ styleId, styleName, index, className, uploadedImage }: GeneratedPhotoPlaceholderProps) => {
   const backgroundClass = styleBackgroundClasses[styleId] || 'bg-gray-200 dark:bg-gray-700';
   const IconComponent = styleIcons[styleId] || Square;
 
@@ -60,22 +61,22 @@ const GeneratedPhotoPlaceholder = ({ styleId, index, className, uploadedImage }:
           <img
             src={uploadedImage}
             alt="Uploaded Product"
-            className="absolute inset-0 w-full h-full object-contain opacity-20" // Semi-transparent background
+            className="absolute inset-0 w-full h-full object-contain opacity-20"
           />
           <div className="relative z-10 flex flex-col items-center justify-center p-2">
             <img
               src={uploadedImage}
               alt="Uploaded Product"
-              className="h-24 w-24 object-contain mb-2 bg-white/80 dark:bg-gray-900/80 rounded-lg p-1 shadow-lg" // Prominent product image
+              className="h-24 w-24 object-contain mb-2 bg-white/80 dark:bg-gray-900/80 rounded-lg p-1 shadow-lg"
             />
-            <p className="text-lg font-bold capitalize text-white text-shadow-sm">{styleId.replace('-', ' ')} Style</p>
+            <p className="text-lg font-bold text-white text-shadow-sm">{styleName}</p> {/* Use styleName */}
             <p className="text-xs mt-1 text-gray-100 text-shadow-sm">Photo {index + 1}</p>
           </div>
         </>
       ) : (
         <>
           <IconComponent className="h-12 w-12 mb-2" />
-          <p className="text-lg font-bold capitalize">{styleId.replace('-', ' ')} Style</p>
+          <p className="text-lg font-bold">{styleName}</p> {/* Use styleName */}
           <p className="text-xs mt-1">Photo {index + 1}</p>
         </>
       )}

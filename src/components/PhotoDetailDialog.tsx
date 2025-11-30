@@ -10,23 +10,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, Share2, Copy, Expand } from 'lucide-react';
+import { Download, Share2, Copy } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import { toast } from 'sonner';
 
 interface PhotoDetailDialogProps {
   styleId: string;
+  styleName: string; // New prop for the full style name
   index: number;
-  children: React.ReactNode; // To wrap the trigger element
-  uploadedImage?: string | null; // New prop for the uploaded image
+  children: React.ReactNode;
+  uploadedImage?: string | null;
 }
 
-const PhotoDetailDialog = ({ styleId, index, children, uploadedImage }: PhotoDetailDialogProps) => {
-  const getGenericPlaceholderUrl = () => "/placeholder.svg"; // Placeholder for actual image URL
+const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage }: PhotoDetailDialogProps) => {
+  const getGenericPlaceholderUrl = () => "/placeholder.svg";
 
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = uploadedImage || getGenericPlaceholderUrl(); // Use uploadedImage if available
+    link.href = uploadedImage || getGenericPlaceholderUrl();
     link.download = `product-photo-${styleId}-${index + 1}.png`;
     document.body.appendChild(link);
     link.click();
@@ -69,13 +70,13 @@ const PhotoDetailDialog = ({ styleId, index, children, uploadedImage }: PhotoDet
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] p-0">
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl font-bold capitalize">{styleId.replace('-', ' ')} Style Photo {index + 1}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">{styleName} Photo {index + 1}</DialogTitle> {/* Use styleName */}
           <DialogDescription>
             A closer look at your AI-generated product photo.
           </DialogDescription>
         </DialogHeader>
         <div className="p-6 pt-4">
-          <GeneratedPhotoPlaceholder styleId={styleId} index={index} uploadedImage={uploadedImage} className="w-full h-auto aspect-video rounded-lg mb-4" />
+          <GeneratedPhotoPlaceholder styleId={styleId} styleName={styleName} index={index} uploadedImage={uploadedImage} className="w-full h-auto aspect-video rounded-lg mb-4" />
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <Button onClick={handleDownload} className="flex-1">
               <Download className="mr-2 h-4 w-4" /> Download

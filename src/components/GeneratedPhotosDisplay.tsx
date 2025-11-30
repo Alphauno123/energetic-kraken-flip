@@ -3,15 +3,15 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, Share2, Copy, Expand } from 'lucide-react'; // Import Expand icon
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner'; // Import toast for user feedback
-import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder'; // Import the new component
-import PhotoDetailDialog from './PhotoDetailDialog'; // Import the new dialog component
+import { Download, Expand } from 'lucide-react';
+import { toast } from 'sonner';
+import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
+import PhotoDetailDialog from './PhotoDetailDialog';
+import { getStyleNameById } from '@/utils/styles'; // Import getStyleNameById
 
 interface GeneratedPhotosDisplayProps {
-  photos: Array<{ styleId: string; uniqueId: string }>; // Updated prop type
-  uploadedImage: string | null; // New prop for the uploaded image
+  photos: Array<{ styleId: string; uniqueId: string }>;
+  uploadedImage: string | null;
 }
 
 const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDisplayProps) => {
@@ -19,7 +19,6 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
     return null;
   }
 
-  // Helper to get a generic placeholder URL for download/share/copy
   const getGenericPlaceholderUrl = () => "/placeholder.svg";
 
   const handleDownloadAll = () => {
@@ -32,11 +31,11 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
 
     photos.forEach((photoData, index) => {
       const link = document.createElement('a');
-      link.href = uploadedImage || getGenericPlaceholderUrl(); // Use uploadedImage if available, otherwise generic placeholder
-      link.download = `product-photo-${photoData.styleId}-${index + 1}.png`; // Suggest a filename
-      document.body.appendChild(link); // Append to body to make it clickable
-      link.click(); // Programmatically click the link
-      document.body.removeChild(link); // Remove the link after clicking
+      link.href = uploadedImage || getGenericPlaceholderUrl();
+      link.download = `product-photo-${photoData.styleId}-${index + 1}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     });
 
     toast.success("All photos are downloading!", { id: "download-toast" });
@@ -56,9 +55,20 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {photos.map((photoData, index) => (
-            <PhotoDetailDialog key={photoData.uniqueId} styleId={photoData.styleId} index={index} uploadedImage={uploadedImage}>
+            <PhotoDetailDialog
+              key={photoData.uniqueId}
+              styleId={photoData.styleId}
+              styleName={getStyleNameById(photoData.styleId)} // Pass the full style name
+              index={index}
+              uploadedImage={uploadedImage}
+            >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
-                <GeneratedPhotoPlaceholder styleId={photoData.styleId} index={index} uploadedImage={uploadedImage} />
+                <GeneratedPhotoPlaceholder
+                  styleId={photoData.styleId}
+                  styleName={getStyleNameById(photoData.styleId)} // Pass the full style name
+                  index={index}
+                  uploadedImage={uploadedImage}
+                />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Button variant="secondary" size="sm" className="flex items-center">
                     <Expand className="mr-2 h-4 w-4" /> View Details
