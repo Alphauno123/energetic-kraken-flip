@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { UploadCloud, X } from 'lucide-react'; // Removed FileText import
+import { UploadCloud, X } from 'lucide-react';
 
 interface ImageUploadProps {
   onImageUpload: (image: string | null) => void;
@@ -62,18 +62,23 @@ const ImageUpload = ({ onImageUpload }: ImageUploadProps) => {
             />
             {!image ? (
               <div
-                className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
-                onClick={triggerFileInput}
+                className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 p-4"
               >
                 <UploadCloud className="w-12 h-12 text-gray-400 mb-2" />
-                <p className="text-gray-500 text-lg font-medium">Drag & drop or click to upload</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">Drag & drop your image here</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">
+                  or
+                </p>
+                <Button onClick={triggerFileInput} className="px-6 py-3">
+                  Browse Files
+                </Button>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                   PNG, JPG, GIF up to 10MB
                 </p>
               </div>
             ) : (
-              <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-gray-200">
-                <img src={image} alt="Uploaded Product" className="w-full h-full object-contain bg-gray-100" />
+              <div className="relative w-full h-96 rounded-lg overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                <img src={image} alt="Uploaded Product" className="w-full h-full object-contain bg-gray-100 dark:bg-gray-800" />
                 <Button
                   variant="destructive"
                   size="icon"
