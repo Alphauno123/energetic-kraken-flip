@@ -2,13 +2,14 @@
 
 import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
-import StyleSelector, { SelectedStyleWithCount } from "@/components/StyleSelector";
+import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import React, { useRef, useState } from "react";
+import { usePhotoGeneration } from "@/hooks/usePhotoGeneration"; // Import the new hook
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
@@ -16,10 +17,15 @@ const Index = () => {
   const generatedPhotosRef = useRef<HTMLDivElement>(null);
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [selectedStylesWithCounts, setSelectedStylesWithCounts] = useState<SelectedStyleWithCount[]>([]);
-  const [generatedPhotos, setGeneratedPhotos] = useState<Array<{ styleId: string; uniqueId: string }>>([]);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [generationProgress, setGenerationProgress] = useState<number>(0);
+
+  const {
+    isGenerating,
+    generationProgress,
+    generatedPhotos,
+    selectedStylesWithCounts,
+    handleStyleSelection,
+    resetGeneration,
+  } = usePhotoGeneration();
 
   const scrollToImageUpload = () => {
     imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,56 +33,15 @@ const Index = () => {
 
   const handleImageUpload = (image: string | null) => {
     setUploadedImage(image);
-    setGeneratedPhotos([]);
-    setSelectedStylesWithCounts([]); // Reset selected styles
-    setIsGenerating(false);
-    setGenerationProgress(0);
+    resetGeneration(); // Reset generation state when a new image is uploaded
     if (image && styleSelectorRef.current) {
       styleSelectorRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const handleStyleSelection = (stylesWithCounts: SelectedStyleWithCount[]) => {
-    setSelectedStylesWithCounts(stylesWithCounts);
-    setIsGenerating(true);
-    setGenerationProgress(0);
-    setGeneratedPhotos([]);
-
-    console.log("Selected styles for generation:", stylesWithCounts);
-
-    const totalImagesToGenerate = stylesWithCounts.reduce((sum, style) => sum + style.count, 0);
-    const simulatedPhotosData: Array<{ styleId: string; uniqueId: string }> = [];
-
-    let currentProgress = 0;
-    const interval = setInterval(() => {
-      currentProgress += 10;
-      if (currentProgress >= 100) {
-        clearInterval(interval);
-        setGenerationProgress(100);
-
-        stylesWithCounts.forEach(style => {
-          for (let i = 0; i < style.count; i++) {
-            simulatedPhotosData.push({ styleId: style.id, uniqueId: `${style.id}-${i}` });
-          }
-        });
-        setGeneratedPhotos(simulatedPhotosData);
-        setIsGenerating(false);
-
-        if (generatedPhotosRef.current) {
-          generatedPhotosRef.current?.scrollIntoView({ behavior: "smooth" });
-        }
-      } else {
-        setGenerationProgress(currentProgress);
-      }
-    }, 200);
-  };
-
   const handleReset = () => {
     setUploadedImage(null);
-    setSelectedStylesWithCounts([]);
-    setGeneratedPhotos([]);
-    setIsGenerating(false);
-    setGenerationProgress(0);
+    resetGeneration(); // Reset generation state
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -93,7 +58,7 @@ const Index = () => {
         </div>
         {uploadedImage && (
           <div ref={styleSelectorRef}>
-            <StyleSelector onSelectStyles={handleStyleSelection} />
+            <StyleSelector onSelectStyles={(styles) => handleStyleSelection(styles, generatedPhotosRef)} />
           </div>
         )}
 
