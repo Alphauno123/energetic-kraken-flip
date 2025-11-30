@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { ImageIcon } from 'lucide-react'; // Import ImageIcon
 
 interface StylePlaceholderImageProps {
-  styleId: string; // Changed from styleName to styleId
-  styleName: string; // Added to display the name
+  styleId: string;
+  styleName: string;
   className?: string;
 }
 
 const StylePlaceholderImage = ({ styleId, styleName, className }: StylePlaceholderImageProps) => {
-  // Define distinct background classes for each styleId
   const styleBackgroundClasses: Record<string, string> = {
     'studio': 'bg-gradient-to-br from-gray-300 to-gray-500 dark:from-gray-600 dark:to-gray-800',
     'lifestyle': 'bg-gradient-to-br from-green-300 to-blue-400 dark:from-green-700 dark:to-blue-900',
@@ -27,11 +27,12 @@ const StylePlaceholderImage = ({ styleId, styleName, className }: StylePlacehold
   return (
     <div
       className={cn(
-        "w-full h-32 flex items-center justify-center text-white text-center text-sm font-semibold p-2 rounded-t-lg",
+        "w-full h-32 flex flex-col items-center justify-center text-white text-center text-sm font-semibold p-2 rounded-t-lg",
         backgroundClass,
         className
       )}
     >
+      <ImageIcon className="h-8 w-8 mb-2" /> {/* Added ImageIcon */}
       {styleName}
     </div>
   );
