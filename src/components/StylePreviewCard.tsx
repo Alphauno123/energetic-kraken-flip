@@ -7,6 +7,7 @@ import StylePlaceholderImage from './StylePlaceholderImage';
 import { Input } from "@/components/ui/input"; // Import Input component
 
 interface StylePreviewCardProps {
+  styleId: string; // New prop to pass to StylePlaceholderImage
   styleName: string;
   description: string;
   isSelected: boolean;
@@ -15,7 +16,7 @@ interface StylePreviewCardProps {
   onCountChange: (newCount: number) => void; // New prop for handling count changes
 }
 
-const StylePreviewCard = ({ styleName, description, isSelected, onClick, count, onCountChange }: StylePreviewCardProps) => {
+const StylePreviewCard = ({ styleId, styleName, description, isSelected, onClick, count, onCountChange }: StylePreviewCardProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value >= 1 && value <= 5) { // Limit to 1-5 images for now
@@ -35,7 +36,7 @@ const StylePreviewCard = ({ styleName, description, isSelected, onClick, count, 
       )}
       onClick={onClick}
     >
-      <StylePlaceholderImage styleName={styleName} />
+      <StylePlaceholderImage styleId={styleId} styleName={styleName} />
       <div className="p-4 flex-grow">
         <h3 className="font-semibold text-lg mb-1">{styleName}</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>

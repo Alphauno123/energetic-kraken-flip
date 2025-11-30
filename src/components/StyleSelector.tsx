@@ -78,6 +78,7 @@ const StyleSelector = ({ onSelectStyles }: { onSelectStyles: (selectedStyles: Se
           {styles.map((style) => (
             <StylePreviewCard
               key={style.id}
+              styleId={style.id} // Pass the style.id
               styleName={style.name}
               description={style.description}
               isSelected={!!selectedStylesMap[style.id]}
