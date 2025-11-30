@@ -3,14 +3,12 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import HeroSection from "@/components/HeroSection";
 import ImageUpload from "@/components/ImageUpload";
-import StyleSelector from "@/components/StyleSelector";
+import StyleSelector, { SelectedStyleWithCount } from "@/components/StyleSelector"; // Import SelectedStyleWithCount
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import HowItWorks from "@/components/HowItWorks";
 import GenerationProgress from "@/components/GenerationProgress";
-import Header from "@/components/Header"; // Import the new Header component
+import Header from "@/components/Header";
 import React, { useRef, useState } from "react";
-// Removed RotateCcw and Button imports as they are now in Header
-// Removed ModeToggle import as it is now in Header
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
@@ -18,7 +16,7 @@ const Index = () => {
   const generatedPhotosRef = useRef<HTMLDivElement>(null);
 
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [selectedStylesWithCounts, setSelectedStylesWithCounts] = useState<SelectedStyleWithCount[]>([]); // Updated state type
   const [generatedPhotos, setGeneratedPhotos] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generationProgress, setGenerationProgress] = useState<number>(0);
@@ -30,7 +28,7 @@ const Index = () => {
   const handleImageUpload = (image: string | null) => {
     setUploadedImage(image);
     setGeneratedPhotos([]);
-    setSelectedStyles([]);
+    setSelectedStylesWithCounts([]); // Reset selected styles
     setIsGenerating(false);
     setGenerationProgress(0);
     if (image && styleSelectorRef.current) {
@@ -38,13 +36,17 @@ const Index = () => {
     }
   };
 
-  const handleStyleSelection = (styles: string[]) => {
-    setSelectedStyles(styles);
+  const handleStyleSelection = (stylesWithCounts: SelectedStyleWithCount[]) => {
+    setSelectedStylesWithCounts(stylesWithCounts);
     setIsGenerating(true);
     setGenerationProgress(0);
     setGeneratedPhotos([]);
 
-    console.log("Selected styles for generation:", styles);
+    console.log("Selected styles for generation:", stylesWithCounts);
+
+    const totalImagesToGenerate = stylesWithCounts.reduce((sum, style) => sum + style.count, 0);
+    let currentGeneratedCount = 0;
+    const simulatedPhotos: string[] = [];
 
     let currentProgress = 0;
     const interval = setInterval(() => {
@@ -52,7 +54,13 @@ const Index = () => {
       if (currentProgress >= 100) {
         clearInterval(interval);
         setGenerationProgress(100);
-        const simulatedPhotos = styles.map((style, index) => `/placeholder.svg?style=${style}&idx=${index}`);
+
+        // Simulate generating all photos based on counts
+        stylesWithCounts.forEach(style => {
+          for (let i = 0; i < style.count; i++) {
+            simulatedPhotos.push(`/placeholder.svg?style=${style.id}&idx=${i}`);
+          }
+        });
         setGeneratedPhotos(simulatedPhotos);
         setIsGenerating(false);
 
@@ -65,10 +73,9 @@ const Index = () => {
     }, 200);
   };
 
-  // Removed handleDownloadAll as it's now handled internally by GeneratedPhotosDisplay
   const handleReset = () => {
     setUploadedImage(null);
-    setSelectedStyles([]);
+    setSelectedStylesWithCounts([]);
     setGeneratedPhotos([]);
     setIsGenerating(false);
     setGenerationProgress(0);
@@ -77,11 +84,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <Header onReset={handleReset} showResetButton={!!uploadedImage} /> {/* Use the new Header component */}
+      <Header onReset={handleReset} showResetButton={!!uploadedImage} />
       <HeroSection onUploadClick={scrollToImageUpload} />
       <HowItWorks />
       <main className="flex-grow container mx-auto px-4 py-12">
-        {/* Removed the old flex container for buttons */}
         <div ref={imageUploadRef}>
           <ImageUpload onImageUpload={handleImageUpload} />
         </div>
@@ -97,7 +103,7 @@ const Index = () => {
 
         {!isGenerating && generatedPhotos.length > 0 && (
           <div ref={generatedPhotosRef}>
-            <GeneratedPhotosDisplay photos={generatedPhotos} /> {/* Removed onDownloadAll prop */}
+            <GeneratedPhotosDisplay photos={generatedPhotos} />
           </div>
         )}
       </main>
