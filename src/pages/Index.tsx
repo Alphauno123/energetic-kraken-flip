@@ -6,7 +6,8 @@ import ImageUpload from "@/components/ImageUpload";
 import StyleSelector from "@/components/StyleSelector";
 import GeneratedPhotosDisplay from "@/components/GeneratedPhotosDisplay";
 import React, { useRef, useState } from "react";
-import { Loader2 } from "lucide-react"; // Import Loader2 icon
+import { Loader2, RotateCcw } from "lucide-react"; // Import Loader2 and RotateCcw icons
+import { Button } from "@/components/ui/button"; // Import Button component
 
 const Index = () => {
   const imageUploadRef = useRef<HTMLDivElement>(null);
@@ -16,7 +17,7 @@ const Index = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[]>([]);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false); // New loading state
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
   const scrollToImageUpload = () => {
     imageUploadRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -56,10 +57,26 @@ const Index = () => {
     console.log("Initiating download for all photos:", generatedPhotos);
   };
 
+  const handleReset = () => {
+    setUploadedImage(null);
+    setSelectedStyles([]);
+    setGeneratedPhotos([]);
+    setIsGenerating(false);
+    // Scroll back to the top or hero section
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <HeroSection onUploadClick={scrollToImageUpload} />
       <main className="flex-grow container mx-auto px-4 py-12">
+        {uploadedImage && ( // Show reset button once an image is uploaded
+          <div className="flex justify-end mb-8">
+            <Button variant="outline" onClick={handleReset} className="flex items-center gap-2">
+              <RotateCcw className="h-4 w-4" /> Start Over
+            </Button>
+          </div>
+        )}
         <div ref={imageUploadRef}>
           <ImageUpload onImageUpload={handleImageUpload} />
         </div>
