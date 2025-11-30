@@ -109,14 +109,14 @@ const GeneratedPhotosDisplay = ({ photos, uploadedImage }: GeneratedPhotosDispla
               styleId={photoData.styleId}
               styleName={getDisplayName(photoData)}
               index={index}
-              uploadedImage={photoData.styleId === "original" ? uploadedImage : uploadedImage}
+              uploadedImage={uploadedImage}
             >
               <div className="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm group cursor-pointer">
                 <GeneratedPhotoPlaceholder
                   styleId={photoData.styleId}
                   styleName={getDisplayName(photoData)}
                   index={index}
-                  uploadedImage={photoData.styleId === "original" ? uploadedImage : uploadedImage}
+                  uploadedImage={uploadedImage}
                   className="w-full h-48"
                   uniqueId={photoData.uniqueId}
                   isSelected={selectedPhotoUniqueIds.has(photoData.uniqueId)}

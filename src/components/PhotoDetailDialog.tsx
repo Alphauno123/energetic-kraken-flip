@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Share2, Copy } from 'lucide-react';
 import GeneratedPhotoPlaceholder from './GeneratedPhotoPlaceholder';
 import { toast } from 'sonner';
-import { getGenericPlaceholderUrl } from '@/utils/imageUtils'; // Import from new utility
+import { getGenericPlaceholderUrl, getStylePreviewImageUrl } from '@/utils/imageUtils'; // Import getStylePreviewImageUrl
 
 interface PhotoDetailDialogProps {
   styleId: string;
@@ -24,10 +24,19 @@ interface PhotoDetailDialogProps {
 }
 
 const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage }: PhotoDetailDialogProps) => {
+  const getImageSourceForAction = () => {
+    if (styleId === 'original' && uploadedImage) {
+      return uploadedImage;
+    }
+    // For generated photos, use a style-specific placeholder URL
+    return getStylePreviewImageUrl(styleId);
+  };
+
   const handleDownload = () => {
+    const imageUrl = getImageSourceForAction();
     const link = document.createElement('a');
-    link.href = uploadedImage || getGenericPlaceholderUrl();
-    link.download = `product-photo-${styleId}-${index + 1}.png`;
+    link.href = imageUrl;
+    link.download = `${styleId === 'original' ? 'original-product-photo' : `product-photo-${styleId}-${index + 1}`}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -36,7 +45,7 @@ const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage 
 
   const handleShare = async () => {
     try {
-      const imageUrl = uploadedImage || window.location.origin + getGenericPlaceholderUrl();
+      const imageUrl = getImageSourceForAction();
       await navigator.clipboard.writeText(imageUrl);
       toast.success("Image link copied to clipboard!");
     } catch (err) {
@@ -47,7 +56,7 @@ const PhotoDetailDialog = ({ styleId, styleName, index, children, uploadedImage 
 
   const handleCopyImage = async () => {
     try {
-      const imageUrl = uploadedImage || getGenericPlaceholderUrl();
+      const imageUrl = getImageSourceForAction();
       const response = await fetch(imageUrl);
       const blob = await response.blob();
       await navigator.clipboard.write([
